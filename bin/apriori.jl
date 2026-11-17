@@ -1,0 +1,3 @@
+using FrequentItemsetMining
+
+exit(main())

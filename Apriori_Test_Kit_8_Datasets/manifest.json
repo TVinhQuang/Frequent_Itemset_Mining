@@ -1,0 +1,82 @@
+[
+  {
+    "name": "01_spmf_example",
+    "description": "SPMF documented Apriori example, 5 transactions",
+    "minsup_relative": "0.40",
+    "transactions": 5,
+    "minsup_count": 2,
+    "expected_itemsets": 15,
+    "dataset": "datasets/01_spmf_example.txt",
+    "expected": "expected/01_spmf_example.txt"
+  },
+  {
+    "name": "02_hcmus_fim_slide",
+    "description": "Transactions from HCMUS Frequent Itemset Mining slides; A=1,C=2,D=3,T=4,W=5",
+    "minsup_relative": "0.80",
+    "transactions": 6,
+    "minsup_count": 5,
+    "expected_itemsets": 3,
+    "dataset": "datasets/02_hcmus_fim_slide.txt",
+    "expected": "expected/02_hcmus_fim_slide.txt"
+  },
+  {
+    "name": "03_threshold_boundary",
+    "description": "Itemsets with support exactly 2 out of 4 qualify",
+    "minsup_relative": "0.50",
+    "transactions": 4,
+    "minsup_count": 2,
+    "expected_itemsets": 6,
+    "dataset": "datasets/03_threshold_boundary.txt",
+    "expected": "expected/03_threshold_boundary.txt"
+  },
+  {
+    "name": "04_dense_transactions",
+    "description": "4 identical transactions containing 4 items; all nonempty subsets frequent",
+    "minsup_relative": "1.00",
+    "transactions": 4,
+    "minsup_count": 4,
+    "expected_itemsets": 15,
+    "dataset": "datasets/04_dense_transactions.txt",
+    "expected": "expected/04_dense_transactions.txt"
+  },
+  {
+    "name": "05_sparse_no_frequent",
+    "description": "Disjoint item pairs; no itemset meets support 2",
+    "minsup_relative": "0.40",
+    "transactions": 5,
+    "minsup_count": 2,
+    "expected_itemsets": 0,
+    "dataset": "datasets/05_sparse_no_frequent.txt",
+    "expected": "expected/05_sparse_no_frequent.txt"
+  },
+  {
+    "name": "06_repeated_baskets",
+    "description": "Same basket repeated in separate transaction lines; count all rows",
+    "minsup_relative": "0.60",
+    "transactions": 5,
+    "minsup_count": 3,
+    "expected_itemsets": 7,
+    "dataset": "datasets/06_repeated_baskets.txt",
+    "expected": "expected/06_repeated_baskets.txt"
+  },
+  {
+    "name": "07_fractional_ceiling",
+    "description": "N=7 and minsup 43%; ceil(3.01)=4, not 3",
+    "minsup_relative": "0.43",
+    "transactions": 7,
+    "minsup_count": 4,
+    "expected_itemsets": 1,
+    "dataset": "datasets/07_fractional_ceiling.txt",
+    "expected": "expected/07_fractional_ceiling.txt"
+  },
+  {
+    "name": "08_large_item_ids",
+    "description": "Non-consecutive integer IDs; all pairs occur twice",
+    "minsup_relative": "0.50",
+    "transactions": 4,
+    "minsup_count": 2,
+    "expected_itemsets": 6,
+    "dataset": "datasets/08_large_item_ids.txt",
+    "expected": "expected/08_large_item_ids.txt"
+  }
+]
