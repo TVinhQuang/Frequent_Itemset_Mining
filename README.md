@@ -6,6 +6,12 @@ Phạm vi hiện tại là tìm **toàn bộ frequent itemsets không rỗng cù
 
 ## Clone và chuẩn bị
 
+[Hướng dẫn chạy dataset mới và lưu bảng so sánh trước/sau tối ưu bằng PowerShell](docs/huong-dan-dataset-moi.md).
+
+[Quy trình benchmark nhóm, mẫu 10–100%, so support, thời gian và RAM với SPMF Apriori](benchmarks/AGENTS.md).
+
+Đợt Retail chính thức gồm 81 lượt chạy trên 9 cấu hình. Cả 27 lần đối chiếu đều khớp SPMF 2.68 về từng itemset và support. [Bảng kết quả CSV](benchmarks/Retail/run-3/results.csv) · [Gói ZIP gồm kết quả, log và biểu đồ](benchmarks/Retail/run-3/Retail-run-3.zip).
+
 Cần Git và Julia **1.9 trở lên**; đặt lệnh `julia` trong PATH. Dự án chỉ dùng thư viện chuẩn, không cần cài dependency bên ngoài. Clone kho nhóm rồi chạy mọi lệnh bên dưới từ thư mục gốc:
 
 ```sh
@@ -55,21 +61,20 @@ Hai bộ đếm dùng chung vòng lặp Apriori:
 - `scan`: thử từng ứng viên có nằm trong transaction hay không, thuận tiện để đọc và đối chiếu.
 - `hash-tree` (mặc định): lưu ứng viên trong hash-tree theo §2.1.2 của bài báo, duyệt các nhánh phù hợp rồi kiểm tra đầy đủ tại lá; mỗi ứng viên chỉ được đếm một lần trong mỗi transaction, kể cả khi hash collision xảy ra.
 
-Chưa có kết quả benchmark để khẳng định hash-tree nhanh hơn scan.
+Ở ngưỡng 5% trên toàn bộ Retail, trung vị ba lượt đo từ lúc khởi động tới khi kết thúc là 9,52 giây với scan và 11,63 giây với hash-tree. RAM đỉnh trung vị tương ứng là 328,8 và 311,0 MiB.
 
 ## Xem từng bước Apriori
 
 `--explain` ghi diễn giải tiếng Việt lên stderr: transaction sau chuẩn hóa, ngưỡng count, từng mức k, cặp join, ứng viên qua prune hoặc bị loại kèm tập con thiếu, số ứng viên C_k sau prune, support tăng trong từng transaction, quyết định giữ/loại và L_k cùng support, rồi lý do dừng. Các dòng này được phát ngay từ lần chạy khai phá thực tế, không chạy lại thuật toán để dựng log. File `--output` vẫn chỉ chứa kết quả SPMF.
 
-Chạy riêng bộ 01 và giữ mọi file trong cùng một thư mục mới bằng PowerShell:
+Chạy riêng bộ 01 và lưu bản diễn giải vào báo cáo được đánh số bằng PowerShell.
 
 ```powershell
-$run = "output/runs/" + (Get-Date -Format "yyyyMMddTHHmmssfff") + "_" + [Guid]::NewGuid().ToString()
-julia --project=. bin/apriori.jl --input Apriori_Test_Kit_8_Datasets/datasets/01_spmf_example.txt --report-dir $run --output "$run/itemsets.txt" --minsup 0.40 --counter hash-tree --explain-file "$run/trace.txt"
-Get-Content -LiteralPath "$run/report.txt" -Encoding UTF8
+New-Item -ItemType Directory -Force -Path output | Out-Null
+julia --project=. bin/apriori.jl --input Apriori_Test_Kit_8_Datasets/datasets/01_spmf_example.txt --minsup 0.40 --counter hash-tree --explain-file output/01-trace.txt
 ```
 
-`--report-dir PATH` phải là thư mục **chưa tồn tại**; CLI tự tạo nó và các thư mục cha cần thiết. Không tạo sẵn `$run`. Nếu không đặt tùy chọn này, bundle tự nằm trong `<output-parent>/runs/<UTC-timestamp_uuid>/`; thư mục cha của output/log bên ngoài bundle phải có sẵn. `--quiet` chỉ ẩn thông báo thành công, vẫn ghi báo cáo.
+CLI in đường dẫn báo cáo và tự lưu `itemsets.txt` trong `output/runs/<dataset>-<số>/`. Ví dụ, hai lần chạy Retail tạo `retail-1` rồi `retail-2`, kể cả khi đổi minsup. Mỗi dataset có dãy số riêng. Nếu chỉ định `--output FILE`, thư mục `runs` nằm cạnh file đó. Muốn tự đặt tên thư mục báo cáo, dùng `--report-dir PATH` với đường dẫn chưa tồn tại. Tạo trước thư mục cha của các file output/log nằm ngoài báo cáo. `--quiet` ẩn thông báo thành công.
 
 `--explain-file PATH` tự bật diễn giải; không cần thêm `--explain`. Dùng `--explain` thay cho `--explain-file` nếu muốn xem diễn giải trên stderr; khi đó không có bản lưu `trace.txt` trong bundle. Ba đường dẫn input, output và diễn giải phải khác nhau, kể cả khi cùng trỏ tới một file qua alias hoặc hardlink. `--explain-limit N` nhận số nguyên dương, mặc định **5.000 dòng chi tiết**. Khi đạt giới hạn, chương trình báo cắt log, vẫn khai phá đầy đủ và luôn ghi tổng kết cuối; giới hạn này không giới hạn số itemsets. `--trace` vẫn dùng được để xem thống kê ngắn theo mức.
 
@@ -184,7 +189,7 @@ Thêm `-Explain` để lưu diễn giải cho cả 16 lần chạy:
 ./bin/test-kit.ps1 -Explain
 ```
 
-Mỗi lần gọi script tạo `output/test-kit/runs/<batch-id>/` mới. Mỗi dataset/counter có bundle tại `<counter>/<dataset>/`, ví dụ `hash-tree/01_spmf_example/report.txt` và `trace.txt`. Script in thời gian khai phá/thời gian tiến trình và đường dẫn batch, đồng thời vẫn đối chiếu đầy đủ itemsets/support.
+Mỗi lần gọi script tạo một thư mục mới theo thứ tự `output/test-kit/runs/batch-1/`, `batch-2/`, … Mỗi dataset/counter có bundle tại `<counter>/<dataset>/`, ví dụ `hash-tree/01_spmf_example/report.txt` và `trace.txt`. Script in thời gian khai phá/thời gian tiến trình và đường dẫn batch, đồng thời vẫn đối chiếu đầy đủ itemsets/support.
 
 Kết quả được giữ ở:
 
@@ -214,11 +219,11 @@ julia --project=. test/runtests.jl
 
 Kiểm thử đối chiếu đầy đủ itemsets/support với oracle vét cạn độc lập trên CSDL nhỏ, ví dụ bài báo, join/prune, hai bộ đếm, hash collision và I/O/CLI. Mã kiểm thử nằm trong `test/`, được chạy từ `test/runtests.jl`.
 
-**Lần xác minh Julia gần nhất (2026-11-17):** chạy thực tế bằng Julia 1.13.4, toàn bộ **2.813 assertions** vượt qua, gồm timing, báo cáo, history, hash snapshot và bảo vệ đường dẫn bên cạnh các kiểm tra thuật toán/trace trước đó. Hai batch thật đều đạt **16/16 PASS**: có giải thích/không warmup, và không giải thích/`Warmup=1`. Batch sau được kiểm tra đủ 16 bundle, cùng hash nguồn, đúng hash snapshot và không có cờ file thay đổi. Script cũng đã chạy hai lần trên fixture để xác nhận lịch sử cũ không đổi. Các kiểm tra trước đó đối chiếu 20 kết quả CLI trên 5 CSDL toy với oracle vét cạn độc lập. `@inferred` kiểm tra đạt cho join và cả hai vòng đếm khi tắt diễn giải. Chưa chạy trực tiếp bằng Julia 1.9.
+Ngày 2026-11-18, Julia 1.13.4 vượt qua 2.828 kiểm tra của project và 24 kiểm tra lấy mẫu, chuẩn hóa và đối chiếu support. Chạy riêng phần giao thức bằng `julia --project=. test/benchmark_protocol.jl`. Hai đợt kiểm thử trước đó trên bộ 8 CSDL đều đạt 16/16 khi dùng hai bộ đếm.
 
 ```text
 Test Summary:         | Pass  Total
-FrequentItemsetMining | 2813   2813
+FrequentItemsetMining | 2828   2828
 ```
 
-Chưa chạy đối chiếu với chương trình SPMF/Java thật; hỗ trợ định dạng SPMF không đồng nghĩa đã xác minh khớp SPMF. Đã có thời gian từng lần chạy; benchmark lặp lại trên dữ liệu lớn và đo bộ nhớ, sinh luật kết hợp cùng hai ứng dụng giỏ hàng/sinh học vẫn là bước sau. Chưa triển khai quản lý bộ đệm ngoài RAM của §2.1.3.
+Retail đã được đối chiếu trực tiếp với SPMF Apriori. Các thành viên phụ trách Chess, Mushrooms và Pumsb lưu kết quả theo [hướng dẫn benchmark](benchmarks/AGENTS.md). Sinh luật kết hợp, hai ứng dụng giỏ hàng/sinh học và quản lý bộ đệm ngoài RAM của §2.1.3 là các phần tiếp theo của đồ án.

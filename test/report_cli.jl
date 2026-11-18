@@ -19,6 +19,7 @@ end
         @test isdir(runs)
         if isdir(runs)
             first_run = only(readdir(runs; join=true))
+            @test basename(first_run) == "input-1"
             @test all(isfile(joinpath(first_run, file)) for file in
                       ("itemsets.txt", "report.txt", "timings.csv", "metadata.toml"))
             @test read(joinpath(first_run, "itemsets.txt"), String) == "1 #SUP: 2\n2 #SUP: 1\n1 2 #SUP: 1\n"
@@ -34,9 +35,50 @@ end
             @test status == 0
             @test isempty(out) && isempty(err)
             @test length(readdir(runs)) == 2
+            @test isdir(joinpath(runs, "input-2"))
             @test read(output, String) == "1 #SUP: 2\n"
             @test all(read(joinpath(first_run, file)) == bytes for (file, bytes) in original)
         end
+    end
+end
+
+@testset "Report numbering follows each dataset" begin
+    mktempdir() do scratch
+        cd(scratch) do
+            runs = joinpath("output", "runs")
+            mkpath(joinpath(runs, "retail-5pct-old-uuid"))
+            for dataset in ("retail", "other")
+                write("$dataset.txt", "1 2\n1\n")
+            end
+            run_dataset(name, count) = main(["--input", "$name.txt", "--min-count", count, "--quiet"]; err=devnull)
+            @test run_dataset("retail", "3") == 0
+            @test run_dataset("other", "2") == 0
+            @test run_dataset("retail", "1") == 0
+            @test isfile(joinpath(runs, "retail-1", "itemsets.txt"))
+            @test isfile(joinpath(runs, "retail-2", "report.txt"))
+            @test isfile(joinpath(runs, "other-1", "report.txt"))
+            mkdir(joinpath(runs, "retail-10"))
+            @test run_dataset("retail", "0") != 0
+            @test !ispath(joinpath(runs, "retail-11"))
+            @test run_dataset("retail", "2") == 0
+            @test isfile(joinpath(runs, "retail-11", "report.txt"))
+        end
+    end
+end
+
+@testset "A concurrent claim keeps its directory" begin
+    mktempdir() do parent
+        first_run = joinpath(parent, "batch-1")
+        function race_with_first_claim(directory)
+            if directory == first_run
+                mkdir(first_run)
+                write(joinpath(first_run, "owner.txt"), "first")
+            end
+        end
+        run = FrequentItemsetMining.numbered_run_directory(parent, "batch"; validate=race_with_first_claim)
+        @test run == joinpath(parent, "batch-2")
+        @test isdir(run)
+        @test read(joinpath(first_run, "owner.txt"), String) == "first"
     end
 end
 

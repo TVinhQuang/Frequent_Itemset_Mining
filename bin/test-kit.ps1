@@ -21,10 +21,10 @@ if (-not (Get-Command $Julia -ErrorAction SilentlyContinue)) {
 $parsedCases = Get-Content -LiteralPath (Join-Path $KitPath 'manifest.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $cases = @($parsedCases)
 if ($cases.Count -eq 0) { throw 'The manifest contains no test cases.' }
-$batchId = [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfff') + '_' + [Guid]::NewGuid().ToString()
-$batchDirectory = Join-Path (Join-Path $OutputDirectory 'runs') $batchId
-if (Test-Path -LiteralPath $batchDirectory) { throw "Batch directory already exists: $batchDirectory" }
-[IO.Directory]::CreateDirectory($batchDirectory) | Out-Null
+$runsDirectory = Join-Path $OutputDirectory 'runs'
+$batchName = & $Julia --startup-file=no (Join-Path $PSScriptRoot 'new-batch.jl') $runsDirectory
+if ($LASTEXITCODE -ne 0) { throw 'Could not create the numbered batch directory.' }
+$batchDirectory = Join-Path $runsDirectory $batchName
 
 function Read-Patterns([string]$Path) {
     $patterns = @{}

@@ -5,3 +5,6 @@
 *.json text eol=lf
 *.txt text eol=lf
 *.ps1 text eol=crlf
+benchmarks/**/results.csv text eol=lf
+# Keep the SPMF download byte-for-byte for the benchmark's raw_sha256.
+data/dataset_train/retail.txt -text !eol -whitespace

@@ -1,6 +1,6 @@
 const CLI_HELP = """
 Plain Apriori from the original paper (Julia, no FIM library).
-Usage: julia --project=. bin/apriori.jl --input INPUT --output OUTPUT
+Usage: julia --project=. bin/apriori.jl --input INPUT [--output OUTPUT]
        (--minsup RATIO | --min-count COUNT) [--counter scan|hash-tree] [--trace]
        [--explain | --explain-file PATH] [--explain-limit N]
        [--report-dir PATH] [--warmup N] [--quiet]
@@ -16,7 +16,8 @@ Usage: julia --project=. bin/apriori.jl --input INPUT --output OUTPUT
 --warmup N          Untraced mining runs before the measured run (default: 0)
 --quiet             Suppress success messages; reports are still written
 --help       Show this help
-Reports default to <output-parent>/runs/<UTC timestamp and UUID>/.
+Reports default to output/runs/<dataset>-N/ or <output-parent>/runs/<dataset>-N/.
+Without --output, itemsets.txt is written directly inside the report directory.
 Output parent must exist unless it is inside the new report directory.
 """
 
@@ -50,9 +51,7 @@ function parse_cli(args)
             throw(ArgumentError("unknown option: $option"))
         end
     end
-    for option in ("--input", "--output")
-        haskey(values, option) || throw(ArgumentError("required option: $option"))
-    end
+    haskey(values, "--input") || throw(ArgumentError("required option: --input"))
     haskey(values, "--minsup") == haskey(values, "--min-count") &&
         throw(ArgumentError("provide exactly one of --minsup or --min-count"))
     return values, trace, explain, quiet
@@ -73,8 +72,6 @@ function cli_inside(path, directory)
 end
 
 function check_cli_report_paths(report_dir, input, output, explanation_path)
-    (ispath(report_dir) || islink(report_dir)) &&
-        throw(ArgumentError("report directory must not already exist: $report_dir"))
     destinations = isnothing(explanation_path) ? [output] : [output, explanation_path]
     for destination in destinations
         islink(destination) && !ispath(destination) &&
@@ -144,13 +141,17 @@ function main(args=ARGS; out=stdout, err=stderr)
         cli_start = time_ns()
         started = Dates.now(Dates.UTC)
         run_id = Dates.format(started, dateformat"yyyymmddTHHMMSSsss") * "_" * string(uuid4())
-        input, output = abspath(values["--input"]), abspath(values["--output"])
+        input = abspath(values["--input"])
+        requested_output = haskey(values, "--output") ? abspath(values["--output"]) : nothing
         explanation_path = haskey(values, "--explain-file") ? abspath(values["--explain-file"]) : nothing
-        report_dir = abspath(get(values, "--report-dir", joinpath(dirname(output), "runs", run_id)))
-        paths = [input, output]
-        !isnothing(explanation_path) && push!(paths, explanation_path)
-        check_cli_paths(paths)
-        check_cli_report_paths(report_dir, input, output, explanation_path)
+        output_for(dir) = something(requested_output, joinpath(dir, "itemsets.txt"))
+        function validate_paths(dir)
+            output = output_for(dir)
+            paths = [input, output]
+            !isnothing(explanation_path) && push!(paths, explanation_path)
+            check_cli_paths(paths)
+            check_cli_report_paths(dir, input, output, explanation_path)
+        end
         min_count = nothing
         if haskey(values, "--min-count")
             min_count = tryparse(Int, values["--min-count"])
@@ -176,10 +177,23 @@ function main(args=ARGS; out=stdout, err=stderr)
         counter_mode(counter)
         source_sha256=implementation_fingerprint()
         # All validation has finished before any destination is created/opened.
-        mkpath(dirname(report_dir))
-        mkdir(report_dir)
-        for destination in paths[2:end]
-            cli_inside(destination, report_dir) && mkpath(dirname(destination))
+        if haskey(values, "--report-dir")
+            report_dir = abspath(values["--report-dir"])
+            (ispath(report_dir) || islink(report_dir)) &&
+                throw(ArgumentError("report directory must not already exist: $report_dir"))
+            validate_paths(report_dir)
+            mkpath(dirname(report_dir))
+            mkdir(report_dir)
+        else
+            parent = isnothing(requested_output) ? abspath("output") : dirname(requested_output)
+            stem = splitext(basename(input))[1]
+            report_dir = numbered_run_directory(joinpath(parent, "runs"), stem; validate=validate_paths)
+        end
+        output = output_for(report_dir)
+        for destination in (output, explanation_path)
+            if !isnothing(destination) && cli_inside(destination, report_dir)
+                mkpath(dirname(destination))
+            end
         end
         warmup_ns = UInt64(0)
         if warmup > 0

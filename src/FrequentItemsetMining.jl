@@ -15,6 +15,7 @@ include("hash_tree.jl")
 include("apriori.jl")
 include("io.jl")
 include("reports.jl")
+include("run_directories.jl")
 include("cli.jl")
 
 end
