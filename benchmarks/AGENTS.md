@@ -1,6 +1,8 @@
 # Hướng dẫn agent chạy benchmark Apriori của nhóm
 
-Làm phần của **một dataset được giao** trong `Retail/`, `Chess/`, `Mushrooms/` hoặc `Pumsb/`. Mỗi đợt hoàn tất có một bảng chung ở `<Dataset>/run-N/results.csv`. Giữ các đợt cũ để đối chiếu trước và sau tối ưu. Thư mục chưa có kết quả chỉ chứa tệp rỗng `.gitkeep` để Git mang thư mục sang máy khác.
+Mỗi dataset có một thư mục riêng trong `benchmarks/`. Mỗi đợt hoàn tất ghi bảng chung ở `<Dataset>/run-N/results.csv`. Giữ các đợt cũ để đối chiếu trước và sau tối ưu.
+
+Bảng Excel trong [summary/](summary/) dùng mốc trước tối ưu. Bản CSV ở ngay dưới mỗi thư mục dataset tương ứng với mốc đó. Mở ZIP trong thư mục `run-N/` để xem log của từng lượt. Nếu cần dùng đúng các đường dẫn log ghi trong Excel, giải nén ZIP vào `benchmarks/<Dataset>/<Dataset>-run-N/`.
 
 ## Chuẩn bị
 
@@ -18,7 +20,7 @@ Ví dụ tái lập **Retail** trên PowerShell, sửa đường dẫn đến Ju
 $julia = 'D:/Tools/Julia-1.13.4-apriori/julia-1.13.4/bin/julia.exe'
 $env:JULIA_DEPOT_PATH = 'D:/Tools/JuliaDepot-apriori'
 $jar = 'D:/Tools/spmf-apriori/spmf.jar'
-& $julia --startup-file=no --threads=1 --project=. bin/benchmark.jl Retail data/dataset_train/retail.txt $jar 1000,750,500,300,200 500
+& $julia --startup-file=no --threads=1 --project=. bin/benchmark.jl Retail data/benchmarks/retail.txt $jar '1000,750,500,300,200' 500
 ```
 
 ## Cách lấy cùng một mẫu

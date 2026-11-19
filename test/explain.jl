@@ -28,7 +28,7 @@ end
     @test occursin("PRUNE {1,2,3}: thiếu tập con {2,3} trong L_2", log)
     @test occursin("C_3 rỗng", log)
 
-    kit = read_spmf(joinpath(@__DIR__, "..", "Apriori_Test_Kit_8_Datasets", "datasets", "01_spmf_example.txt"))
+    kit = read_spmf(joinpath(@__DIR__, "..", "data", "test-kit", "datasets", "01_spmf_example.txt"))
     for counter in (:scan, :hash_tree)
         result, log = explain_run(kit; min_support="0.40", counter)
         @test length(result.itemsets) == 15

@@ -1,14 +1,16 @@
 output/
 
+# Local copies extracted from the published per-run ZIP files.
+/benchmarks/*/*-run-[0-9]*/
+
 # Local session notes and original course references.
 /CODEX_PROGRESS.md
 /docs/superpowers/
-/apriori_longer.pdf
 /itemset.md
 /Phạm vi đã chốt.txt
 
 # The shared project runs and verifies results with Julia/PowerShell.
-/Apriori_Test_Kit_8_Datasets/verify_apriori_output.py
+/data/test-kit/verify_apriori_output.py
 
 # Local Julia environment and generated artifacts.
 /.julia/
