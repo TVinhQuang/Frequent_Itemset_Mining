@@ -33,10 +33,10 @@ Chạy riêng một bộ bằng CLI Julia (mọi hệ điều hành có Julia):
 
 ```sh
 mkdir output
-julia --project=. bin/apriori.jl --input Apriori_Test_Kit_8_Datasets/datasets/01_spmf_example.txt --output output/example.txt --minsup 0.40 --counter hash-tree --warmup 1
+julia --project=. bin/apriori.jl --input data/test-kit/datasets/01_spmf_example.txt --output output/example.txt --minsup 0.40 --counter hash-tree --warmup 1
 ```
 
-Bỏ qua `mkdir output` nếu thư mục đã có. Mỗi lần chạy lưu báo cáo itemsets/support, thời gian và metadata trong bundle mới; script cả bộ lưu ở `output/test-kit/runs/`. Xem [README chính](../README.md) để biết các file và phạm vi đo thời gian.
+Bỏ qua `mkdir output` nếu thư mục đã có. Mỗi lần chạy lưu báo cáo itemsets/support, thời gian và metadata trong bundle mới; script cả bộ lưu ở `output/test-kit/runs/`. Xem [README chính](../../docs/chay-apriori.md) để biết các file và phạm vi đo thời gian.
 
 ## Kiểm thử đề xuất
 
@@ -49,14 +49,6 @@ Bỏ qua `mkdir output` nếu thư mục đã có. Mỗi lần chạy lưu báo 
 7. `07`: làm tròn **lên** ngưỡng 43% của 7 transaction thành 4.
 8. `08`: không giả định item IDs phải liên tiếp từ 1.
 
-## Benchmark lớn (không kèm trong ZIP)
+## Dữ liệu để đo hiệu năng
 
-SPMF datasets: https://www.philippe-fournier-viger.com/spmf/index.php?link=datasets.php
-
-- Chess: https://www.philippe-fournier-viger.com/spmf/publicdatasets/chess.txt
-- Mushrooms (bản SPMF 8416 giao tác): https://www.philippe-fournier-viger.com/spmf/publicdatasets/mushrooms.txt
-- Retail: https://www.philippe-fournier-viger.com/spmf/publicdatasets/retail.txt
-- T10I4D100K: https://www.philippe-fournier-viger.com/spmf/publicdatasets/T10I4D100K.txt
-- Accidents: https://www.philippe-fournier-viger.com/spmf/publicdatasets/accidents.txt
-
-**Cảnh báo về phiên bản Mushroom:** trong mô tả nhóm/FIMI có 8124 giao tác, trong khi trang SPMF hiện liệt kê tệp `mushrooms.txt` 8416 dòng. Hai bộ này cần coi là hai phiên bản/biểu diễn khác nhau cho tới khi kiểm tra nội dung; không so sánh kết quả bằng cùng minsup absolute khi chưa xác minh.
+Bốn bộ Retail, Mushrooms, Chess và Pumsb nằm trong [data/benchmarks](../benchmarks/). Bản Mushrooms nhóm dùng có 8.416 giao dịch. [Các đợt đo và kết quả đối chiếu](../../README.md#kết-quả-benchmark)

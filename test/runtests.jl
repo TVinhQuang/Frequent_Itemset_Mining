@@ -12,6 +12,7 @@ using .FrequentItemsetMining
     include("timing.jl")
     include("reports.jl")
     include("report_cli.jl")
+    include("splice_junction.jl")
 end
 
 include("rules_tests.jl")

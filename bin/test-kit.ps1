@@ -11,7 +11,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
-if (-not $KitPath) { $KitPath = Join-Path $projectRoot 'Apriori_Test_Kit_8_Datasets' }
+if (-not $KitPath) { $KitPath = Join-Path $projectRoot 'data/test-kit' }
 if (-not $OutputDirectory) { $OutputDirectory = Join-Path $projectRoot 'output/test-kit' }
 $KitPath = (Resolve-Path -LiteralPath $KitPath -ErrorAction Stop).Path
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)

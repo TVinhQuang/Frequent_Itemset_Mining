@@ -7,10 +7,10 @@ Apriori khai phá các nhóm item thường xuất hiện cùng nhau trong một
 Mở PowerShell tại thư mục gốc của project (thư mục chứa `Project.toml`). Tạo thư mục để chứa các bộ dữ liệu của bạn.
 
 ```powershell
-New-Item -ItemType Directory -Force -Path data/dataset_train | Out-Null
+New-Item -ItemType Directory -Force -Path data/benchmarks | Out-Null
 ```
 
-Mỗi dataset là **một file TXT UTF-8**, mỗi dòng là **một giao dịch**, mỗi item là **một số nguyên không âm**, cách nhau bằng khoảng trắng. Ví dụ, file `data/dataset_train/gio_hang.txt` có thể chứa ba đơn hàng sau.
+Mỗi dataset là **một file TXT UTF-8**, mỗi dòng là **một giao dịch**, mỗi item là **một số nguyên không âm**, cách nhau bằng khoảng trắng. Ví dụ, file `data/benchmarks/gio_hang.txt` có thể chứa ba đơn hàng sau.
 
 ```text
 10 20
@@ -37,7 +37,7 @@ if ($cmdJulia) {
 Dùng lệnh dưới đây sau khi lưu `gio_hang.txt`. Bạn cũng có thể đổi `$file` thành `'data/toy/paper.txt'` để thử ngay với dữ liệu sẵn có.
 
 ```powershell
-$file = 'data/dataset_train/gio_hang.txt'
+$file = 'data/benchmarks/gio_hang.txt'
 & $julia --project=. bin/apriori.jl --input $file --minsup 0.50 --counter hash-tree --warmup 1
 if ($LASTEXITCODE -ne 0) { throw 'Apriori chạy lỗi. Xem thông báo phía trên.' }
 ```
@@ -48,24 +48,24 @@ Terminal in đường dẫn thư mục vừa tạo ở dòng `Report:`. Mỗi da
 
 ### Chạy bộ Retail của SPMF
 
-File Retail nằm ở `data/dataset_train/retail.txt`. Nếu cần tải lại trên máy khác, mở mục **Datasets for Frequent Itemset mining → Datasets in SPMF format**, nhấp chuột phải vào **retail**, chọn **Save link as…** và lưu với cùng đường dẫn. [Trang danh mục SPMF](https://www.philippe-fournier-viger.com/spmf/datasets.php) · [File retail.txt gốc](https://www.philippe-fournier-viger.com/spmf/publicdatasets/retail.txt)
+File Retail nằm ở `data/benchmarks/retail.txt`. Nếu cần tải lại trên máy khác, mở mục **Datasets for Frequent Itemset mining → Datasets in SPMF format**, nhấp chuột phải vào **retail**, chọn **Save link as…** và lưu với cùng đường dẫn. [Trang danh mục SPMF](https://www.philippe-fournier-viger.com/spmf/datasets.php) · [File retail.txt gốc](https://www.philippe-fournier-viger.com/spmf/publicdatasets/retail.txt)
 
 Từ thư mục gốc, sau khi khai báo `$julia` như ở bước 2, chạy đoạn sau. Ngưỡng 5% tương ứng ít nhất 4.409 trong 88.162 giao dịch. Mỗi lần chạy tạo một thư mục kết quả riêng.
 
 ```powershell
-& $julia --startup-file=no --project=. bin/apriori.jl --input data/dataset_train/retail.txt --minsup 0.05 --counter hash-tree --warmup 1
+& $julia --startup-file=no --project=. bin/apriori.jl --input data/benchmarks/retail.txt --minsup 0.05 --counter hash-tree --warmup 1
 if ($LASTEXITCODE -ne 0) { throw 'Apriori chạy lỗi. Xem thông báo phía trên.' }
 ```
 
-Lượt đầu theo cách đặt tên mới ghi vào `output/runs/retail-1/`. Đổi ngưỡng rồi chạy lại sẽ ghi vào `retail-2/`, tiếp theo là `retail-3/`. Các thư mục mã dài cũ vẫn mở được bằng đường dẫn ban đầu. Để so tốc độ hai bộ đếm trên riêng Retail, dùng khối lệnh ở bước 3 với `$datasets = @(Get-Item -LiteralPath 'data/dataset_train/retail.txt')` và `$minsup = '0.05'`.
+Lượt đầu theo cách đặt tên mới ghi vào `output/runs/retail-1/`. Đổi ngưỡng rồi chạy lại sẽ ghi vào `retail-2/`, tiếp theo là `retail-3/`. Các thư mục mã dài cũ vẫn mở được bằng đường dẫn ban đầu. Để so tốc độ hai bộ đếm trên riêng Retail, dùng khối lệnh ở bước 3 với `$datasets = @(Get-Item -LiteralPath 'data/benchmarks/retail.txt')` và `$minsup = '0.05'`.
 
 ## 3. Chạy nhiều dataset và xuất bảng so sánh
 
-Đặt các file giao dịch `.txt` cần đo vào `data/dataset_train/`. Chạy khối PowerShell sau tại thư mục gốc, trong phiên đã khai báo `$julia` ở bước 2. Nếu muốn kiểm tra nhanh trước, thay dòng gán `$datasets` bằng `$datasets = @(Get-Item -LiteralPath 'data/toy/paper.txt')`. Bạn có thể dùng một ngưỡng khác khi chạy lại cả đợt.
+Đặt các file giao dịch `.txt` cần đo vào `data/benchmarks/`. Chạy khối PowerShell sau tại thư mục gốc, trong phiên đã khai báo `$julia` ở bước 2. Nếu muốn kiểm tra nhanh trước, thay dòng gán `$datasets` bằng `$datasets = @(Get-Item -LiteralPath 'data/toy/paper.txt')`. Bạn có thể dùng một ngưỡng khác khi chạy lại cả đợt.
 
 ```powershell
-$datasets = @(Get-ChildItem -LiteralPath 'data/dataset_train' -File -Filter '*.txt' -ErrorAction Stop)
-if ($datasets.Count -eq 0) { throw 'Hãy thêm file giao dịch TXT vào data/dataset_train.' }
+$datasets = @(Get-ChildItem -LiteralPath 'data/benchmarks' -File -Filter '*.txt' -ErrorAction Stop)
+if ($datasets.Count -eq 0) { throw 'Hãy thêm file giao dịch TXT vào data/benchmarks.' }
 $minsup = '0.50'
 $repeats = 3
 $batchName = & $julia --startup-file=no bin/new-batch.jl output/bench

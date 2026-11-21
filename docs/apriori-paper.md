@@ -1,6 +1,6 @@
 # Apriori: đọc bài báo và diễn giải từng bước
 
-Tài liệu nền: Rakesh Agrawal và Ramakrishnan Srikant, [*Fast Algorithms for Mining Association Rules*](https://www.philippe-fournier-viger.com/spmf/apriori_longer.pdf). Phần trọng tâm là §2.1, Figure 1 và §2.1.1–2.1.2, trang 5–8 của PDF. Nội dung dưới đây diễn giải thuật toán; chưa phải bằng chứng một cài đặt đã được kiểm chứng với SPMF.
+Tài liệu nền: Rakesh Agrawal và Ramakrishnan Srikant, [*Fast Algorithms for Mining Association Rules*](apriori_longer.pdf). Phần trọng tâm là §2.1, Figure 1 và §2.1.1–2.1.2, trang 5–8 của PDF. Nội dung dưới đây diễn giải thuật toán; chưa phải bằng chứng một cài đặt đã được kiểm chứng với SPMF.
 
 ## 1. Apriori giải bài toán nào?
 
@@ -220,7 +220,7 @@ k=3 candidates=1 frequent=1
 
 ## 11. Đọc diễn giải của lần chạy thực tế
 
-`--trace` ở trên là bảng thống kê ngắn. Để thấy cách thuật toán đi đến kết quả, thêm `--explain` vào lệnh CLI: chương trình ghi diễn giải tiếng Việt lên stderr. Dùng `--explain-file PATH` để tự bật diễn giải và ghi vào file UTF-8 riêng; file kết quả `--output` vẫn theo định dạng SPMF. Xem [lệnh PowerShell chạy bộ 01](../README.md#xem-từng-bước-apriori) và cách chạy toàn bộ test kit với `-Explain` trong README.
+`--trace` ở trên là bảng thống kê ngắn. Để thấy cách thuật toán đi đến kết quả, thêm `--explain` vào lệnh CLI: chương trình ghi diễn giải tiếng Việt lên stderr. Dùng `--explain-file PATH` để tự bật diễn giải và ghi vào file UTF-8 riêng; file kết quả `--output` vẫn theo định dạng SPMF. Xem [lệnh PowerShell chạy bộ 01](chay-apriori.md#xem-từng-bước-apriori) và cách chạy toàn bộ test kit với `-Explain` trong README.
 
 Diễn giải bắt đầu bằng N, ngưỡng count, bộ đếm và từng transaction sau chuẩn hóa. Ở mức 1, mỗi lần một item xuất hiện trong transaction sẽ tăng count đúng một lần; chương trình so count với ngưỡng rồi liệt kê L_1. Ở các mức tiếp theo, đọc theo thứ tự:
 
@@ -273,7 +273,7 @@ Lệnh quen thuộc sau chạy lại toàn bộ 8 CSDL với cả hai bộ đế
 
 Mở `output/test-kit/runs/<batch-id>/<counter>/<dataset>/report.txt` để xem toàn bộ frequent itemsets, support count, tỷ lệ `count/N` và bảng thời gian theo k. Cùng thư mục có `itemsets.txt` dạng SPMF, `timings.csv` giữ `elapsed_ns` gốc và `elapsed_ms`, `metadata.toml` ghi dữ liệu/mã nguồn SHA256 cùng tham số/runtime, và `trace.txt` khi bật `-Explain`. File `results.csv` ở gốc batch tổng hợp đối chiếu, thời gian và đường dẫn từng báo cáo. Mỗi batch giữ riêng lịch sử; các output phẳng cũ được giữ nguyên.
 
-Khi chạy một CSDL riêng, CLI tự đánh số báo cáo trong `output/runs/<dataset>-<số>/`. Nếu đặt `--output FILE`, thư mục `runs` nằm cạnh file đó. `--report-dir PATH` cho phép chọn thư mục báo cáo mới theo tên riêng. `--quiet` ẩn thông báo thành công. [Lệnh chạy riêng bộ 01](../README.md#xem-từng-bước-apriori).
+Khi chạy một CSDL riêng, CLI tự đánh số báo cáo trong `output/runs/<dataset>-<số>/`. Nếu đặt `--output FILE`, thư mục `runs` nằm cạnh file đó. `--report-dir PATH` cho phép chọn thư mục báo cáo mới theo tên riêng. `--quiet` ẩn thông báo thành công. [Lệnh chạy riêng bộ 01](chay-apriori.md#xem-từng-bước-apriori).
 
 Log và số đo được sinh từ quá trình thực thi hiện tại. Nội dung giải thích có thể giống nhau giữa hai lần chạy vì input, ngưỡng và thứ tự duyệt giống nhau; đây không phải dấu hiệu dùng lại log tĩnh. Thời điểm UTC, run-id, hash input/mã nguồn và số đo thực tế được lưu cùng kết quả để kiểm tra điều kiện chạy.
 
