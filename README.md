@@ -2,6 +2,15 @@
 
 Nhóm cài đặt Apriori bằng Julia theo bài báo của Rakesh Agrawal và Ramakrishnan Srikant. Hai bộ đếm `scan` và `hash-tree` dùng chung bước sinh ứng viên và trả về từng tập phổ biến cùng support count. [Bài báo gốc (PDF)](docs/apriori_longer.pdf) · [Thuật toán và mã nguồn tương ứng](docs/apriori-paper.md)
 
+## Đề bài và phạm vi của nhóm
+
+- [Đề bài gốc của giảng viên](itemset.md) gồm toàn bộ yêu cầu, các hướng ứng dụng được phép chọn và tiêu chí chấm điểm.
+- [Phạm vi đã chốt của nhóm](Phạm%20vi%20đã%20chốt.txt) ghi lựa chọn thuật toán Apriori và cách áp dụng cho bộ dữ liệu Splice-junction.
+
+## Chạy Ứng dụng 2 trên Google Colab
+
+Mở notebook, chọn **Python 3, CPU** rồi chọn **Runtime → Run all**. Notebook tải dữ liệu DNA từ UCI, gọi Apriori của nhóm bằng Julia và hiển thị support ở từng nhóm EI, IE và N. Có thể đổi `splice_minsup` trong ô chạy Apriori. [Mở trên Google Colab](https://colab.research.google.com/github/TVinhQuang/Frequent_Itemset_Mining/blob/main/notebooks/demo.ipynb) · [Xem notebook trên GitHub](notebooks/demo.ipynb)
+
 ## Chạy ví dụ trong bài báo
 
 Cài Julia 1.9 trở lên, mở terminal tại thư mục gốc của repo và chạy:
@@ -17,7 +26,7 @@ Ví dụ Figure 3 có 4 giao dịch. Với support count tối thiểu bằng 2,
 | Thư mục | Nội dung |
 | --- | --- |
 | [data/](data/README.md) | Bốn dataset benchmark, ví dụ Figure 3, các bộ nhỏ và đáp án kiểm thử. |
-| [apps/](apps/) | Nơi nhóm đưa mã nguồn của hai ứng dụng. |
+| [apps/](apps/README.md) | Lệnh chạy và kết quả mẫu của Ứng dụng 2 trên bộ dữ liệu Splice-junction. |
 | [src/](src/) và [bin/](bin/) | Cài đặt Apriori, CLI và các lệnh benchmark. |
 | [test/](test/) | Kiểm thử thuật toán, hai bộ đếm và CLI bằng Julia. |
 | [benchmarks/](benchmarks/) | Bảng kết quả từng dataset, gói log và báo cáo so sánh. |
@@ -29,6 +38,8 @@ Ví dụ Figure 3 có 4 giao dịch. Với support count tối thiểu bằng 2,
 julia --project=. test/runtests.jl
 julia --project=. test/benchmark_protocol.jl
 ```
+
+Với Julia 1.13.4, bộ kiểm thử chính đạt 2.839/2.839 và bộ kiểm thử quy trình benchmark đạt 24/24. Notebook chạy từ đầu trên bộ UCI với ngưỡng 20% cho 225 mẫu, khớp với [bảng kết quả mẫu](apps/splice-junction/results/patterns.csv).
 
 Để chạy cả 8 bộ dữ liệu chức năng qua hai bộ đếm và so với đáp án, dùng PowerShell:
 

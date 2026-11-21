@@ -1,0 +1,19 @@
+Các mẫu nucleotide quanh điểm nối exon – intron
+Số đoạn: EI=767, IE=768, N=1655
+Vị trí: -4..-1, +1..+4. Minsup mỗi nhóm: 0.20. Tổng số mẫu khác nhau: 225
+
+EI (exon → intron)
+Cặp có chênh lệch support lớn nhất so với N: +1:G +2:T
+  EI: 759/767 (98.96%)
+  IE: 108/768 (14.06%)
+  N: 98/1655 (5.92%)
+Trong bộ UCI, hai nucleotide ở đúng hai vị trí này thường đi cùng nhau gần ranh giới exon → intron hơn ở tâm các đoạn đối chứng.
+
+IE (intron → exon)
+Cặp có chênh lệch support lớn nhất so với N: -2:A -1:G
+  EI: 389/767 (50.72%)
+  IE: 764/768 (99.48%)
+  N: 127/1655 (7.67%)
+Trong bộ UCI, hai nucleotide ở đúng hai vị trí này thường đi cùng nhau gần ranh giới intron → exon hơn ở tâm các đoạn đối chứng.
+
+Các tỷ lệ mô tả tập dữ liệu đã gán nhãn. Đánh giá khả năng dự đoán điểm nối cần dữ liệu kiểm chứng độc lập.
