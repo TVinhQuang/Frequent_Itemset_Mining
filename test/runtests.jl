@@ -13,3 +13,5 @@ using .FrequentItemsetMining
     include("reports.jl")
     include("report_cli.jl")
 end
+
+include("rules_tests.jl")
