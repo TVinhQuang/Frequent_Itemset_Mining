@@ -11,4 +11,4 @@ Nguồn dữ liệu: https://doi.org/10.24432/C5M888
 
 3. Liên kết của nhóm
 GitHub: https://github.com/TVinhQuang/Frequent_Itemset_Mining.git
-Google Colab (Ứng dụng 2): https://colab.research.google.com/github/TVinhQuang/Frequent_Itemset_Mining/blob/main/notebooks/demo.ipynb
+Google Colab (Ứng dụng 2): https://colab.research.google.com/github/TVinhQuang/Frequent_Itemset_Mining/blob/main/notebooks/ung-dung-2-splice-junction.ipynb

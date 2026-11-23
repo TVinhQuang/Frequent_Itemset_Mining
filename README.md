@@ -9,7 +9,7 @@ Nhóm cài đặt Apriori bằng Julia theo bài báo của Rakesh Agrawal và R
 
 ## Chạy Ứng dụng 2 trên Google Colab
 
-Mở notebook, chọn **Python 3, CPU** rồi chọn **Runtime → Run all**. Notebook tải dữ liệu DNA từ UCI, gọi Apriori của nhóm bằng Julia và hiển thị support ở từng nhóm EI, IE và N. Có thể đổi `splice_minsup` trong ô chạy Apriori. [Mở trên Google Colab](https://colab.research.google.com/github/TVinhQuang/Frequent_Itemset_Mining/blob/main/notebooks/demo.ipynb) · [Xem notebook trên GitHub](notebooks/demo.ipynb)
+Mở notebook, chọn **Python 3, CPU** rồi chọn **Runtime → Run all**. Notebook tải dữ liệu DNA từ UCI, gọi Apriori của nhóm bằng Julia và hiển thị support ở từng nhóm EI, IE và N. Có thể đổi `splice_minsup` trong ô chạy Apriori. [Mở trên Google Colab](https://colab.research.google.com/github/TVinhQuang/Frequent_Itemset_Mining/blob/main/notebooks/ung-dung-2-splice-junction.ipynb) · [Xem notebook trên GitHub](notebooks/ung-dung-2-splice-junction.ipynb)
 
 ## Chạy ví dụ trong bài báo
 
