@@ -7,9 +7,11 @@ Nhóm cài đặt Apriori bằng Julia theo bài báo của Rakesh Agrawal và R
 - [Đề bài gốc của giảng viên](itemset.md) gồm toàn bộ yêu cầu, các hướng ứng dụng được phép chọn và tiêu chí chấm điểm.
 - [Phạm vi đã chốt của nhóm](Phạm%20vi%20đã%20chốt.txt) ghi lựa chọn thuật toán Apriori và cách áp dụng cho bộ dữ liệu Splice-junction.
 
-## Chạy Ứng dụng 2 trên Google Colab
+## Hai ứng dụng trên Google Colab
 
-Mở notebook, chọn **Python 3, CPU** rồi chọn **Runtime → Run all**. Notebook tải dữ liệu DNA từ UCI, gọi Apriori của nhóm bằng Julia và hiển thị support ở từng nhóm EI, IE và N. Có thể đổi `splice_minsup` trong ô chạy Apriori. [Mở trên Google Colab](https://colab.research.google.com/github/TVinhQuang/Frequent_Itemset_Mining/blob/main/notebooks/ung-dung-2-splice-junction.ipynb) · [Xem notebook trên GitHub](notebooks/ung-dung-2-splice-junction.ipynb)
+[Mở notebook tổng hợp Retail và Splice-junction trên Google Colab](https://colab.research.google.com/drive/12c0VClg6WQqTU2FTRtY1YbiWCU13HDA9?usp=sharing)
+
+Chọn **Python 3 (CPU)** rồi **Runtime → Run all**. Phần đầu dùng Apriori để tìm các mặt hàng mua chung trong dữ liệu Retail và xếp hạng 10 luật theo lift. Phần sau so sánh các mẫu DNA quanh điểm nối exon–intron của bộ Splice-junction với nhóm đối chứng.
 
 ## Chạy ví dụ trong bài báo
 
