@@ -16,3 +16,7 @@ using .FrequentItemsetMining
 end
 
 include("rules_tests.jl")
+
+include("apriori_optimized.jl")
+
+include("benchmark_optimized_sampling.jl")

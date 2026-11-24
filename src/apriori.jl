@@ -126,6 +126,61 @@ function apriori_gen(previous::Vector{NTuple{K,Int}}, trace::AbstractAprioriTrac
     return candidates
 end
 
+
+"""
+    foreach_candidate_batch(callback, previous, batch_size, trace)
+
+Generate Apriori candidates with the same prefix-join and all-subsets pruning
+rules as `apriori_gen`, but deliver bounded batches to `callback`. The callback
+must finish counting/filtering a batch before returning; candidate tuples are
+not retained by this function after the callback.
+"""
+function foreach_candidate_batch(callback::F, previous::Vector{NTuple{K,Int}},
+                                 batch_size::Int, trace::AbstractAprioriTrace) where {K,F}
+    K >= 1 || throw(ArgumentError("previous itemsets must not be empty"))
+    batch_size >= 1 || throw(ArgumentError("candidate_batch_size must be >= 1"))
+    generation_started = time_ns()
+    ordered = issorted(previous) && allunique(previous) ? previous : sort!(unique(previous))
+    known = Set(ordered)
+    batch = NTuple{K+1,Int}[]
+    total = 0
+    generation_ns = UInt64(0)
+
+    for i in eachindex(ordered)
+        left = ordered[i]
+        for j in (i + 1):length(ordered)
+            right = ordered[j]
+            all(left[p] == right[p] for p in 1:(K - 1)) || break
+            candidate = (left..., right[K])
+            record!(trace, :join, left, right, candidate)
+            valid = true
+            for removed in 1:(K + 1)
+                subset = ntuple(p -> candidate[p + (p >= removed)], Val(K))
+                if !(subset in known)
+                    record!(trace, :prune, candidate, subset, K)
+                    valid = false
+                    break
+                end
+            end
+            if valid
+                push!(batch, candidate)
+                total += 1
+                record!(trace, :accepted, candidate)
+                if length(batch) == batch_size
+                    generation_ns += time_ns() - generation_started
+                    callback(batch)
+                    empty!(batch)
+                    generation_started = time_ns()
+                end
+            end
+        end
+    end
+
+    generation_ns += time_ns() - generation_started
+    isempty(batch) || callback(batch)
+    return (; total, generation_ns)
+end
+
 function count_candidates(candidates::Vector{NTuple{K,Int}}, database::Vector{Vector{Int}},
                           ::Val{:scan}, trace::AbstractAprioriTrace=NoTrace(),
                           timings::Union{Nothing,Vector{PhaseTiming}}=nothing) where K
@@ -169,27 +224,47 @@ end
 
 function next_level(previous::Vector{NTuple{K,Int}}, database, threshold, mode,
                     trace::AbstractAprioriTrace=NoTrace(),
-                    timings::Union{Nothing,Vector{PhaseTiming}}=nothing) where K
+                    timings::Union{Nothing,Vector{PhaseTiming}}=nothing;
+                    candidate_batch_size::Int=10_000) where K
     record!(trace, :level, K+1)
-    started = time_ns()
-    candidates = apriori_gen(previous, trace)
-    record_phase!(timings, :generate_candidates, K+1, time_ns() - started, length(candidates), 0)
-    record!(trace, :candidates, K+1, length(candidates))
-    isempty(candidates) && return candidates, Int[], 0
-    counts = count_candidates(candidates, database, mode, trace, timings)
-    started = time_ns()
     frequent = NTuple{K+1,Int}[]
     supports = Int[]
-    for id in eachindex(candidates)
-        record!(trace, :decision, candidates[id], counts[id], threshold)
-        if counts[id] >= threshold
-            push!(frequent, candidates[id])
-            push!(supports, counts[id])
+    generation_phase_index = Ref(0)
+
+    candidate_stats = foreach_candidate_batch(previous, candidate_batch_size, trace) do candidates
+        if !isnothing(timings) && iszero(generation_phase_index[])
+            push!(timings, PhaseTiming(:generate_candidates, K+1, UInt64(0), 0, 0))
+            generation_phase_index[] = length(timings)
+        end
+        counts = count_candidates(candidates, database, mode, trace, timings)
+        filter_started = time_ns()
+        frequent_in_batch = 0
+        for id in eachindex(candidates)
+            record!(trace, :decision, candidates[id], counts[id], threshold)
+            if counts[id] >= threshold
+                push!(frequent, candidates[id])
+                push!(supports, counts[id])
+                frequent_in_batch += 1
+            end
+        end
+        record_phase!(timings, :filter, K+1, time_ns() - filter_started,
+                      length(candidates), frequent_in_batch)
+    end
+
+    candidate_total = candidate_stats.total
+    explain_frequent!(trace, K+1, frequent, supports)
+    if !isnothing(timings)
+        if iszero(generation_phase_index[])
+            record_phase!(timings, :generate_candidates, K+1,
+                          candidate_stats.generation_ns, candidate_total, 0)
+        else
+            timings[generation_phase_index[]] =
+                PhaseTiming(:generate_candidates, K+1, candidate_stats.generation_ns,
+                            candidate_total, 0)
         end
     end
-    explain_frequent!(trace, K+1, frequent, supports)
-    record_phase!(timings, :filter, K+1, time_ns() - started, length(candidates), length(frequent))
-    return frequent, supports, length(candidates)
+    record!(trace, :candidates, K+1, candidate_total)
+    return frequent, supports, candidate_total
 end
 
 counter_mode(counter) = counter in (:scan, "scan") ? Val(:scan) :
@@ -203,8 +278,11 @@ Plain Apriori (Figure 1): join/prune, scan original transactions, filter L_k.
 Pass exactly one support threshold. Empty API rows still contribute to N.
 All data is materialized in RAM; §2.1.3 external-memory handling is deferred.
 """
-function mine(transactions; min_support=nothing, min_count=nothing, counter=:hash_tree, explain=nothing)
+function mine(transactions; min_support=nothing, min_count=nothing, counter=:hash_tree,
+              explain=nothing, candidate_batch_size::Int=10_000)
     mining_started = time_ns()
+    candidate_batch_size >= 1 ||
+        throw(ArgumentError("candidate_batch_size must be >= 1"))
     mode = counter_mode(counter)
     trace = isnothing(explain) ? NoTrace() : explain
     trace isa AbstractAprioriTrace || throw(ArgumentError("explain must be ExplainTrace or nothing"))
@@ -257,7 +335,7 @@ function mine(transactions; min_support=nothing, min_count=nothing, counter=:has
     size = 2
     while !isempty(previous)
         level_started = time_ns()
-        current, supports, candidate_count = next_level(previous, database, threshold, mode, trace, timings)
+        current, supports, candidate_count = next_level(previous, database, threshold, mode, trace, timings; candidate_batch_size)
         if iszero(candidate_count)
             record!(trace, :stop, "C_$size rỗng, không còn ứng viên để đếm.")
             record_phase!(timings, :level_total, size, time_ns() - level_started, 0, 0)
