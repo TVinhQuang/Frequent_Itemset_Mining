@@ -13,6 +13,12 @@ Nhóm cài đặt Apriori bằng Julia theo bài báo của Rakesh Agrawal và R
 
 Chọn **Python 3 (CPU)** rồi **Runtime → Run all**. Phần đầu dùng Apriori để tìm các mặt hàng mua chung trong dữ liệu Retail và xếp hạng 10 luật theo lift. Phần sau so sánh các mẫu DNA quanh điểm nối exon–intron của bộ Splice-junction với nhóm đối chứng.
 
+| Notebook | Nội dung |
+| --- | --- |
+| [demo.ipynb](notebooks/demo.ipynb) | Bản tổng hợp để chạy cả hai ứng dụng và xem kết quả ngay trong notebook. |
+| [ung-dung-1-retail.ipynb](notebooks/ung-dung-1-retail.ipynb) | Bản riêng của Ứng dụng 1, phân tích giỏ hàng Retail. |
+| [ung-dung-2-splice-junction.ipynb](notebooks/ung-dung-2-splice-junction.ipynb) | Bản riêng của Ứng dụng 2, phân tích điểm nối exon–intron. |
+
 ## Chạy ví dụ trong bài báo
 
 Cài Julia 1.9 trở lên, mở terminal tại thư mục gốc của repo và chạy:
