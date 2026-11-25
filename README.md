@@ -52,13 +52,16 @@ Kết quả lần chạy ngày 25/11/2026 với Julia 1.13.4, gồm kiểm thử
 ```text
 Test Summary                                        | Pass  Total
 FrequentItemsetMining                               | 2875   2875
+Apriori vs SPMF on the small test databases         |   34     34
 AssociationRules                                    |  228    228
 Optimized Apriori variants                          |  342    342
 Optimized benchmark APRIORI-V1 transaction sampling |   45     45
 Nested transaction samples and support comparisons  |   24     24
 ```
 
-Lệnh chính đạt 3.490/3.490, gồm kiểm tra ứng dụng Retail cục bộ với toàn bộ 45 luật đã xuất từ notebook. Kiểm tra giao thức chạy riêng đạt 24/24. [Output lệnh chính](apps/market-basket/results/runtests.txt) · [Output kiểm tra giao thức](benchmarks/optimized/thuc-nghiem-bo-sung-20261125/protocol-test.txt)
+Lệnh chính đạt 3.524/3.524, gồm kiểm tra ứng dụng Retail cục bộ với toàn bộ 45 luật đã xuất từ notebook. Kiểm tra giao thức chạy riêng đạt 24/24. [Output lệnh chính](apps/market-basket/results/runtests.txt) · [Output kiểm tra giao thức](benchmarks/optimized/thuc-nghiem-bo-sung-20261125/protocol-test.txt)
+
+Trên bộ test nhỏ của Chương 1, Scan và Hash-tree mỗi bản khớp **8/8 CSDL (100%)** với SPMF 2.68. Mỗi bản khớp đủ 53/53 cặp tập mục–support và cùng trả về 0 tập ở ca rỗng. Unit test mặc định dùng đầu ra SPMF đã lưu. Đặt biến môi trường `SPMF_JAR` để kiểm tra thêm bằng cách chạy lại JAR. [Bảng kết quả, dữ liệu tham chiếu và lệnh tái lập](data/test-kit/README.md)
 
 Để chạy cả 8 bộ dữ liệu chức năng qua hai bộ đếm và so với đáp án, dùng PowerShell:
 

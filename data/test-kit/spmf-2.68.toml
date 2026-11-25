@@ -1,0 +1,123 @@
+# SPMF output captured on the inputs and thresholds in manifest.json (LF line endings).
+spmf_version = "2.68"
+java_version = "27+35-2325"
+algorithm = "Apriori"
+run_date = 2026-11-25
+jar_sha256 = "2cc2d89e39909230ea0455da4a1c79b389dc98ca04b0670befb63e679b5e2ea0"
+
+[cases.01_spmf_example]
+minsup = "0.40"
+input_sha256 = "d5335622670e7451638c6bad97f62d5a8361c896b5e53cd202dd21fb264c3ee4"
+output = '''
+@FILETYPE="Frequent itemsets"
+@SOURCE="SPMF SOFTWARE https://philippe-fournier-viger.com/spmf/"
+1 #SUP: 3
+2 #SUP: 4
+3 #SUP: 4
+5 #SUP: 4
+3 5 #SUP: 3
+2 3 #SUP: 3
+2 5 #SUP: 4
+1 2 #SUP: 2
+1 3 #SUP: 3
+1 5 #SUP: 2
+1 3 5 #SUP: 2
+1 2 3 #SUP: 2
+1 2 5 #SUP: 2
+2 3 5 #SUP: 3
+1 2 3 5 #SUP: 2
+'''
+
+[cases.02_hcmus_fim_slide]
+minsup = "0.80"
+input_sha256 = "d37c212244f0f8df527fc8681650155614dd70393250c613f512bb7778a4337b"
+output = '''
+@FILETYPE="Frequent itemsets"
+@SOURCE="SPMF SOFTWARE https://philippe-fournier-viger.com/spmf/"
+5 #SUP: 5
+2 #SUP: 6
+2 5 #SUP: 5
+'''
+
+[cases.03_threshold_boundary]
+minsup = "0.50"
+input_sha256 = "7ec653d2d1090b53613b0c3efca8d578ed11079ec45499d27a53a31f4d7e7b39"
+output = '''
+@FILETYPE="Frequent itemsets"
+@SOURCE="SPMF SOFTWARE https://philippe-fournier-viger.com/spmf/"
+1 #SUP: 3
+2 #SUP: 3
+3 #SUP: 3
+2 3 #SUP: 2
+1 2 #SUP: 2
+1 3 #SUP: 2
+'''
+
+[cases.04_dense_transactions]
+minsup = "1.00"
+input_sha256 = "029465521f2c0dd7c3fbc2cc8464bdcfc008f8768f6d86d051f9aae88fdf293f"
+output = '''
+@FILETYPE="Frequent itemsets"
+@SOURCE="SPMF SOFTWARE https://philippe-fournier-viger.com/spmf/"
+6 #SUP: 4
+7 #SUP: 4
+8 #SUP: 4
+9 #SUP: 4
+8 9 #SUP: 4
+7 8 #SUP: 4
+7 9 #SUP: 4
+6 7 #SUP: 4
+6 8 #SUP: 4
+6 9 #SUP: 4
+6 8 9 #SUP: 4
+6 7 8 #SUP: 4
+6 7 9 #SUP: 4
+7 8 9 #SUP: 4
+6 7 8 9 #SUP: 4
+'''
+
+[cases.05_sparse_no_frequent]
+minsup = "0.40"
+input_sha256 = "46ef41713f14bafff3d35786975211b64bc2bc0f24524238eb5623df80125fe2"
+output = '''
+@FILETYPE="Frequent itemsets"
+@SOURCE="SPMF SOFTWARE https://philippe-fournier-viger.com/spmf/"
+'''
+
+[cases.06_repeated_baskets]
+minsup = "0.60"
+input_sha256 = "2953b20b137d29de1032d93051736a2e3318fa7c21dc7297350eb52e3d7e9d5e"
+output = '''
+@FILETYPE="Frequent itemsets"
+@SOURCE="SPMF SOFTWARE https://philippe-fournier-viger.com/spmf/"
+1 #SUP: 4
+3 #SUP: 4
+2 #SUP: 5
+2 3 #SUP: 4
+1 3 #SUP: 3
+1 2 #SUP: 4
+1 2 3 #SUP: 3
+'''
+
+[cases.07_fractional_ceiling]
+minsup = "0.43"
+input_sha256 = "23f63c743f76a44dfcd3922f463dfb35b22884aed976985fc4a50a81fe099106"
+output = '''
+@FILETYPE="Frequent itemsets"
+@SOURCE="SPMF SOFTWARE https://philippe-fournier-viger.com/spmf/"
+2 #SUP: 4
+'''
+
+[cases.08_large_item_ids]
+minsup = "0.50"
+input_sha256 = "6c2a7ebcd3a593bf04c477a33183970e52a28ffcbe37aa05f25ff0ec4db530d8"
+output = '''
+@FILETYPE="Frequent itemsets"
+@SOURCE="SPMF SOFTWARE https://philippe-fournier-viger.com/spmf/"
+902 #SUP: 3
+105 #SUP: 3
+1001 #SUP: 3
+105 1001 #SUP: 2
+105 902 #SUP: 2
+902 1001 #SUP: 2
+'''

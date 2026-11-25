@@ -207,7 +207,7 @@ Lượt chạy ngày 2026-11-16 bằng Julia 1.13.4: **16/16 PASS** (8 CSDL × 2
 julia --project=. bin/apriori.jl --input data/test-kit/datasets/01_spmf_example.txt --output output/test-kit/example.txt --minsup 0.40 --counter hash-tree --trace
 ```
 
-Thư mục output phải tồn tại trước khi chạy riêng CLI. Chạy script toàn bộ ở trên sẽ tạo sẵn `output/test-kit/`. Đáp án của bộ test là kết quả vét cạn độc lập, chưa phải kết quả chạy SPMF/Java thật; bộ này cũng không thay thế benchmark lớn.
+Thư mục output phải tồn tại trước khi chạy riêng CLI. Script toàn bộ ở trên tự tạo `output/test-kit/` và dùng đáp án vét cạn độc lập. Lệnh unit test ở phần dưới còn đối chiếu Scan và Hash-tree với đầu ra SPMF 2.68 trên cùng 8 CSDL. [Kết quả từng bộ và lệnh chạy lại JAR](../data/test-kit/README.md)
 
 ### Kiểm thử nội bộ
 

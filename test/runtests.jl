@@ -16,6 +16,7 @@ using .FrequentItemsetMining
     include("splice_junction.jl")
 end
 
+include("spmf_test_kit.jl")
 include("rules_tests.jl")
 include("apriori_optimized.jl")
 include("benchmark_optimized_sampling.jl")

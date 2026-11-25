@@ -173,7 +173,7 @@ API/CLI phân biệt rõ ngưỡng tỷ lệ và ngưỡng count. Support đúng
 - Ép mọi item vào cùng bucket để kiểm tra collision, kết quả không được đếm lặp hoặc nhận nhầm ứng viên.
 - Kiểm tra item/transaction trùng, đầu vào chưa sắp thứ tự, item ID thưa, empty database và ngưỡng sát biên.
 - Kiểm tra đọc/xuất SPMF và lỗi đầu vào.
-- Sau khi có SPMF thật, tiếp tục so sánh toàn bộ mapping itemset -> support. Vét cạn đúng trên dữ liệu nhỏ chưa thay thế phép đối chiếu SPMF mà đề yêu cầu.
+- Chạy SPMF trên cùng đầu vào và ngưỡng, so sánh toàn bộ cặp tập mục–support với từng bộ đếm. [Đầu ra SPMF và kết quả trên 8 CSDL nhỏ](../data/test-kit/README.md)
 
 Số lượng ứng viên có thể tăng rất lớn ở dữ liệu dày và minsup thấp. Hash-tree không loại bỏ độ khó tổ hợp của bài toán và không đảm bảo luôn nhanh hơn scan. §2.1.3 còn mô tả cách xử lý khi ứng viên không vừa RAM; bản đầu sẽ nêu rõ giới hạn nạp dữ liệu vào RAM, phần quản lý ngoài RAM để bước sau.
 
@@ -216,7 +216,7 @@ k=2 candidates=6 frequent=4
 k=3 candidates=1 frequent=1
 ```
 
-`levels` chỉ ghi các mức đã được đếm; không thêm dòng C4=0 khi không còn ứng viên để quét. Chạy kiểm thử bằng `julia --project=. test/runtests.jl`; xem [README](../README.md) để chạy API và theo dõi trạng thái xác minh. Julia 1.13.4 đã vượt qua 2.813 assertions, gồm timing/report/history; bộ 8 CSDL với diễn giải bật đạt 16/16 PASS. Các kiểm tra trước đó cũng đối chiếu 20 kết quả CLI trên 5 CSDL toy với oracle vét cạn độc lập. Các kiểm tra này chưa thay thế đối chiếu SPMF/Java thật.
+`levels` chỉ ghi các mức đã được đếm. Khi không còn ứng viên để quét, kết quả dừng ở mức trước đó. Các kiểm tra CLI ban đầu đã đối chiếu 20 kết quả trên 5 CSDL toy với đáp án vét cạn. Bộ unit test hiện cũng so từng tập mục và support của Scan và Hash-tree với kết quả SPMF 2.68 lưu trên 8 CSDL khác nhau. Cả hai bộ đếm đều đạt 8/8. Chạy `julia --project=. test/runtests.jl` để kiểm tra lại. [Kết quả từng CSDL và lệnh chạy với JAR](../data/test-kit/README.md)
 
 ## 11. Đọc diễn giải của lần chạy thực tế
 

@@ -109,7 +109,7 @@ Với thời gian $t_b,t_o$ và peak RAM $m_b,m_o$ của baseline và engine đa
 
 | Nội dung trong đề | Tài liệu và cách sử dụng |
 |---|---|
-| Chương 1, dòng 77–89 | Dùng [Apriori và bài báo](apriori-paper.md) cho bước sinh ứng viên, [chứng minh và chi phí](chuong-toi-uu-apriori.md) cho Bitset, Streaming và lưu mức trên đĩa. CLI chuẩn SPMF và output kiểm thử ở [README](../README.md). |
+| Chương 1, dòng 77–89 | Dùng [Apriori và bài báo](apriori-paper.md) cho bước sinh ứng viên, [chứng minh và chi phí](chuong-toi-uu-apriori.md) cho Bitset, Streaming và lưu mức trên đĩa. Phần tái tạo có [tỷ lệ đúng theo từng CSDL so với SPMF 2.68](../data/test-kit/README.md). Scan và Hash-tree mỗi bản đạt 8/8 CSDL. |
 | Chương 2, dòng 93–125 | Dùng [các ZIP, CSV và bảng tổng hợp](../benchmarks/) cho so từng tập với SPMF, biểu đồ giảm minsup, RAM ở ngưỡng giữa và quy mô 10–100%. Có 120 lượt trên 40 cấu hình, mọi mapping khớp. SPMF nhanh nhất trên cả 40 cấu hình theo đồng hồ toàn tiến trình. |
 | Chương 2, dòng 126–134 | Thí nghiệm độ dài ở đầu tài liệu này bổ sung biến còn thiếu. Retail nhân bản khảo sát giới hạn bộ nhớ. Liên hệ số ứng viên, chi phí bộ đếm và các hướng tối ưu ở trên với từng quan sát. |
 | Phạm vi các đề xuất ngoài đề | CLI cơ bản đã đáp ứng I/O của đề. Đợt bổ sung mở đường xuất kết quả ở cả ba engine external, kiểm tra biên word của bitmap và packed key. Các nghiên cứu nhiều seed, áp trần bộ nhớ hệ điều hành, đo I/O vật lý và tách đóng góp của từng tối ưu là các bước mở rộng. Bộ CSV hiện đo một seed và peak toàn tiến trình. |

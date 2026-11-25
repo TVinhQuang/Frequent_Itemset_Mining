@@ -8,7 +8,33 @@ Bộ này chứa **8 cơ sở dữ liệu nhỏ**, mỗi file `.txt` là một C
 - `02_hcmus_fim_slide`: dữ liệu ví dụ 6 giao tác trong bài giảng Khai thác tập phổ biến HCMUS. Ánh xạ A=1, C=2, D=3, T=4, W=5.
 - `03` đến `08`: dữ liệu giả lập do người biên soạn bộ test tạo để bắt các lỗi biên.
 
-Kết quả trong `expected/` được **tính độc lập bằng liệt kê tổ hợp exhaustive/brute-force**, không sao chép từ mã Apriori và **chưa phải là kết quả đã đối chiếu bằng cách thực sự chạy SPMF**. Nhóm nên xác nhận với SPMF khi thực hiện báo cáo Correctness.
+Thư mục [expected/](expected/) chứa đáp án tính bằng vét cạn độc lập. Ngày 25/11/2026, nhóm cũng chạy lệnh `Apriori` của **SPMF 2.68** bằng Java 27 trên đúng 8 tệp và ngưỡng trong [manifest.json](manifest.json). Nhóm lưu đầu ra của từng lần chạy, ngưỡng, SHA-256 của đầu vào và của JAR trong [spmf-2.68.toml](spmf-2.68.toml). Hai nguồn đáp án khớp trên cả 8 CSDL.
+
+## Tỷ lệ đúng so với SPMF
+
+Một CSDL đạt khi đầu ra Julia có đúng mọi tập mục SPMF tìm thấy, support count của từng tập bằng nhau và không có tập dư hay trùng. Thứ tự dòng và thứ tự item trong một tập không ảnh hưởng phép so. Bảng ghi số cặp *(tập mục, support count)* khớp trên tổng số cặp SPMF của từng CSDL.
+
+| CSDL | Minsup | Support count tối thiểu | Scan so với SPMF | Hash-tree so với SPMF |
+| --- | ---: | ---: | ---: | ---: |
+| 01 · Ví dụ SPMF | 40% | 2 | 15/15 | 15/15 |
+| 02 · Bài giảng HCMUS | 80% | 5 | 3/3 | 3/3 |
+| 03 · Support đúng ngưỡng | 50% | 2 | 6/6 | 6/6 |
+| 04 · Giao dịch dày | 100% | 4 | 15/15 | 15/15 |
+| 05 · Không có tập đạt ngưỡng | 40% | 2 | Cùng rỗng | Cùng rỗng |
+| 06 · Giỏ hàng lặp | 60% | 3 | 7/7 | 7/7 |
+| 07 · Làm tròn ngưỡng | 43% | 4 | 1/1 | 1/1 |
+| 08 · Mã item không liên tiếp | 50% | 2 | 6/6 | 6/6 |
+
+**Scan đạt 8/8 CSDL (100%) và Hash-tree đạt 8/8 CSDL (100%).** Mỗi bộ đếm khớp 53/53 cặp trên toàn bộ test-kit. Ca 05 đạt vì cả hai đầu ra có 0 tập mục. Ca này đóng góp một CSDL vào tỷ lệ 8/8 và 0 cặp vào tổng 53.
+
+Lệnh `julia --project=. test/runtests.jl` chạy đối chiếu này mặc định bằng đầu ra SPMF đã lưu. Để chạy lại chính JAR trên cả 8 CSDL, đặt `SPMF_JAR` trỏ tới JAR có SHA-256 trong tệp bằng chứng, cài `java` trong PATH và chạy từ thư mục gốc. Ví dụ với PowerShell trên Windows:
+
+```powershell
+$env:SPMF_JAR = 'D:\Tools\spmf-apriori\spmf.jar'
+julia --project=. test/spmf_test_kit.jl
+```
+
+Chế độ này kiểm thêm số tập SPMF báo sau mỗi lần chạy và so từng cặp trong tệp vừa xuất với bản lưu. [Mã kiểm thử](../../test/spmf_test_kit.jl)
 
 ## Format
 
