@@ -11,6 +11,7 @@
 *.png binary
 *.xlsx binary
 benchmarks/**/results.csv text eol=lf
+apps/*/results/*.csv text eol=lf
 # Keep the SPMF download byte-for-byte for the benchmark's raw_sha256.
 data/benchmarks/*.txt -text !eol -whitespace
 # The notebook verifies the original UCI data bytes.
