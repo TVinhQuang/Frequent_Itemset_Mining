@@ -45,23 +45,25 @@ Bỏ qua dòng trống và dòng metadata bắt đầu bằng `@`, `%` hoặc `#
 """
 function read_itemsets(path::AbstractString)
     counts = Dict{Vector{Int},Int}()
-    for (ln, line) in enumerate(eachline(path))
-        s = strip(line)
-        (isempty(s) || s[1] in ('@', '%', '#')) && continue
-        pos = findfirst(SUP_MARK, s)
-        pos === nothing && throw(ArgumentError("$path:$ln: thiếu '$SUP_MARK'"))
-        left = strip(s[1:prevind(s, first(pos))])
-        right = strip(s[(last(pos) + 1):end])
-        items = try
-            sort!(parse.(Int, split(left)))
-        catch
-            throw(ArgumentError("$path:$ln: item không phải số nguyên"))
-        end
-        isempty(items) && continue
-        counts[items] = try
-            parse(Int, right)
-        catch
-            throw(ArgumentError("$path:$ln: support count không hợp lệ"))
+    open(path, "r") do source
+        for (ln, line) in enumerate(eachline(source))
+            s = strip(line)
+            (isempty(s) || s[1] in ('@', '%', '#')) && continue
+            pos = findfirst(SUP_MARK, s)
+            pos === nothing && throw(ArgumentError("$path:$ln: thiếu '$SUP_MARK'"))
+            left = strip(s[1:prevind(s, first(pos))])
+            right = strip(s[(last(pos) + 1):end])
+            items = try
+                sort!(parse.(Int, split(left)))
+            catch
+                throw(ArgumentError("$path:$ln: item không phải số nguyên"))
+            end
+            isempty(items) && continue
+            counts[items] = try
+                parse(Int, right)
+            catch
+                throw(ArgumentError("$path:$ln: support count không hợp lệ"))
+            end
         end
     end
     return counts

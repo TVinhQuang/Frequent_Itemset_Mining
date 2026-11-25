@@ -1,4 +1,4 @@
-output/
+/output/
 
 # Local copies extracted from the published per-run ZIP files.
 /benchmarks/*/*-run-[0-9]*/
@@ -6,7 +6,23 @@ output/
 # Local session notes and the previous working copy of the assignment.
 /CODEX_PROGRESS.md
 /docs/superpowers/
-/docs/noi-bo/itemset-da-loc.md
+/docs/noi-bo/
+/docs/REVIEW_NOTES_v*.md
+# Local editing template. The submitted report belongs in docs/Report.pdf.
+/docs/Report.docx
+/data/online-retail/
+__pycache__/
+*.pyc
+
+# The study reconstructs each normalized 100% input from data/benchmarks.
+/benchmarks/optimized/kiem-chung-20261125/*.csv.samples/transactions_100pct.txt
+# Published optimized run logs are collected in benchmarks/optimized/logs.zip.
+/benchmarks/optimized/**/*.log
+# The authoritative baseline CSV is the one inside each dataset's run directory.
+/benchmarks/Chess/results.csv
+/benchmarks/Mushrooms/results.csv
+/benchmarks/Pumsb/results.csv
+/benchmarks/Retail/results.csv
 
 # The shared project runs and verifies results with Julia/PowerShell.
 /data/test-kit/verify_apriori_output.py

@@ -135,17 +135,17 @@ end
 
 """Một lượt chạy; elapsed bao gồm đọc input và mine, không serialize output."""
 function run_once(input::String, min_count::Int, engine::String, baseline::String,
-                  candidate_batch_size::Int)
+                  candidate_batch_size::Int; itemset_io=nothing, progress=true)
     started = time_ns()
     result = if engine == "baseline"
         transactions = read_spmf(input)
         counter = baseline == "scan" ? :scan : :hash_tree
         mine_external(transactions; min_count=min_count, counter=counter, candidate_batch_size,
-                      normalized=true, progress=true)
+                      normalized=true, progress, itemset_io)
     elseif engine == "bitset"
-        mine_bitset_external(input; min_count=min_count, candidate_batch_size, progress=true)
+        mine_bitset_external(input; min_count=min_count, candidate_batch_size, progress, itemset_io)
     elseif engine == "streaming"
-        mine_streaming_external(input; min_count=min_count, candidate_batch_size, progress=true)
+        mine_streaming_external(input; min_count=min_count, candidate_batch_size, progress, itemset_io)
     else
         error("Unknown engine: $engine")
     end
@@ -199,7 +199,7 @@ end
 
 """Process worker. Chỉ in summary nhỏ, không serialize toàn bộ itemsets."""
 function worker(args)
-    length(args) == 7 || error("Invalid worker arguments; expected 7 arguments")
+    length(args) in (7, 8) || error("Expected 7 worker arguments and an optional verification output")
     input = abspath(args[1])
     min_count = parse(Int, args[2])
     engine, baseline = args[3], args[4]
@@ -226,6 +226,9 @@ function worker(args)
     end
 
     label = engine == "baseline" ? "baseline-$baseline" : engine
+    # Capture the high-water mark before serializing an optional verification run.
+    println("SAMPLES|", join(times_ms, '|'))
+    println("PEAK_BYTES|", Sys.maxrss())
     println(join(("RESULT", label,
         string(round(median_value(times_ms); digits=6)),
         string(round(minimum(times_ms); digits=6)),
@@ -235,6 +238,11 @@ function worker(args)
         last_summary.candidate_total, last_summary.level_count,
         last_summary.fingerprint_sum, last_summary.fingerprint_xor), '|'))
     flush(stdout)
+    if length(args) == 8
+        open(args[8], "w") do io
+            run_once(input, min_count, engine, baseline, candidate_batch_size; itemset_io=io, progress=false)
+        end
+    end
     return 0
 end
 
@@ -571,6 +579,11 @@ end
 if abspath(PROGRAM_FILE) == SCRIPT_PATH
     if !isempty(ARGS) && ARGS[1] == "--worker"
         exit(worker(ARGS[2:end]))
+    elseif length(ARGS) == 5 && ARGS[1] == "--export"
+        input, count, engine, target = ARGS[2:end]
+        open(target, "w") do io
+            run_once(input, parse(Int, count), engine, "hash-tree", 10_000; itemset_io=io, progress=false)
+        end
     else
         exit(benchmark(ARGS))
     end

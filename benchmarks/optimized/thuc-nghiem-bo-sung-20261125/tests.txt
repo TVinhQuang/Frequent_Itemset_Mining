@@ -1,0 +1,8 @@
+Test Summary:         | Pass  Total   Time
+FrequentItemsetMining | 2867   2867  30.7s
+Test Summary:    | Pass  Total  Time
+AssociationRules |  228    228  1.2s
+Test Summary:              | Pass  Total  Time
+Optimized Apriori variants |  342    342  9.8s
+Test Summary:                                       | Pass  Total  Time
+Optimized benchmark APRIORI-V1 transaction sampling |   45     45  1.2s

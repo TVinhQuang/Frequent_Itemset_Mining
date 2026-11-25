@@ -282,7 +282,7 @@ end
 """Shared disk-output loop. `count_batch` returns supports aligned with candidates."""
 function external_mine_levels!(directory::String, transaction_count::Int, threshold::Int,
                                singleton_counts::Dict{Int,Int}, count_batch::F,
-                               candidate_batch_size::Int; progress::Bool=false) where F
+                               candidate_batch_size::Int; progress::Bool=false, itemset_io=nothing) where F
     levels = LevelStats[]
     transaction_count == 0 && return build_external_summary(transaction_count, threshold,
         levels, 0, UInt128(0), UInt64(0), UInt64(0))
@@ -300,6 +300,7 @@ function external_mine_levels!(directory::String, transaction_count::Int, thresh
             if support >= threshold
                 itemset = (item,)
                 write_itemset(output, itemset)
+                isnothing(itemset_io) || println(itemset_io, item, " #SUP: ", support)
                 l1_count += 1
                 itemset_count += 1
                 support_sum += UInt128(support)
@@ -337,6 +338,7 @@ function external_mine_levels!(directory::String, transaction_count::Int, thresh
                     if support >= threshold
                         itemset = candidates[id]
                         write_itemset(output, itemset)
+                        isnothing(itemset_io) || println(itemset_io, join(itemset, ' '), " #SUP: ", support)
                         current_count[] += 1
                         itemset_count += 1
                         support_sum += UInt128(support)
@@ -375,7 +377,7 @@ end
 """Baseline Apriori benchmark path: input transactions stay in RAM; levels/results stay on disk."""
 function mine_external(transactions; min_support=nothing, min_count=nothing,
                        counter=:hash_tree, candidate_batch_size::Int=10_000,
-                       workdir=nothing, normalized::Bool=false, progress::Bool=false)
+                       workdir=nothing, normalized::Bool=false, progress::Bool=false, itemset_io=nothing)
     candidate_batch_size >= 1 || throw(ArgumentError("candidate_batch_size must be >= 1"))
     mode = counter_mode(counter)
     database = if normalized
@@ -393,13 +395,13 @@ function mine_external(transactions; min_support=nothing, min_count=nothing,
     return with_external_directory(workdir) do directory
         count_batch = (candidates, _) -> count_candidates(candidates, database, mode)
         external_mine_levels!(directory, length(database), threshold, singleton_counts,
-                              count_batch, candidate_batch_size; progress)
+                              count_batch, candidate_batch_size; progress, itemset_io)
     end
 end
 
 function mine_bitset_external(path::AbstractString; min_support=nothing, min_count=nothing,
                               candidate_batch_size::Int=10_000, workdir=nothing,
-                              progress::Bool=false)
+                              progress::Bool=false, itemset_io=nothing)
     candidate_batch_size >= 1 || throw(ArgumentError("candidate_batch_size must be >= 1"))
     transaction_count, singleton_counts = file_singleton_counts(path)
     threshold = support_threshold(transaction_count, min_support, min_count)
@@ -426,13 +428,13 @@ function mine_bitset_external(path::AbstractString; min_support=nothing, min_cou
             counts
         end
         external_mine_levels!(directory, transaction_count, threshold, singleton_counts,
-                              count_batch, candidate_batch_size; progress)
+                              count_batch, candidate_batch_size; progress, itemset_io)
     end
 end
 
 function mine_streaming_external(path::AbstractString; min_support=nothing, min_count=nothing,
                                  candidate_batch_size::Int=10_000, workdir=nothing,
-                                 progress::Bool=false)
+                                 progress::Bool=false, itemset_io=nothing)
     candidate_batch_size >= 1 || throw(ArgumentError("candidate_batch_size must be >= 1"))
     transaction_count, singleton_counts = file_singleton_counts(path)
     threshold = support_threshold(transaction_count, min_support, min_count)
@@ -450,6 +452,6 @@ function mine_streaming_external(path::AbstractString; min_support=nothing, min_
             counts
         end
         external_mine_levels!(directory, transaction_count, threshold, singleton_counts,
-                              count_batch, candidate_batch_size; progress)
+                              count_batch, candidate_batch_size; progress, itemset_io)
     end
 end

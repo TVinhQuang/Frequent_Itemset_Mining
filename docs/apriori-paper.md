@@ -186,7 +186,7 @@ Chương trình dùng Julia >= 1.9. Module [FrequentItemsetMining.jl](../src/Fre
 | Định nghĩa transaction là tập item | `normalize_transactions` trong [apriori.jl](../src/apriori.jl) | Bỏ item trùng nhưng giữ các dòng transaction trùng và transaction rỗng trong API |
 | Ngưỡng count trong Figure 1 | `support_threshold`, `decimal_ratio` trong [apriori.jl](../src/apriori.jl) | Chuyển chuỗi tỷ lệ thành `Rational{BigInt}` và ceiling chính xác |
 | Figure 1: vòng lặp Apriori | `mine`, `next_level` trong [apriori.jl](../src/apriori.jl) | L1, sinh Ck, quét dữ liệu, lọc Lk, tích lũy kết quả |
-| §2.1.1: join và prune | `apriori_gen` trong [apriori.jl](../src/apriori.jl) | Join cùng tiền tố bằng chỉ số, rồi kiểm tra mọi tập con dài k-1 |
+| §2.1.1: join và prune | `apriori_gen` và `foreach_candidate_batch` trong [apriori.jl](../src/apriori.jl) | Hàm thứ nhất minh họa phép sinh đầy đủ. Luồng `mine` chuyển từng lô ứng viên qua bộ đếm sau khi nối và tỉa. |
 | subset(Ck, t), bản dễ đọc | `count_candidates` với `Val(:scan)` trong [apriori.jl](../src/apriori.jl) | Kiểm tra từng ứng viên đối với transaction |
 | §2.1.2: hash-tree | `HashTree`, `HashQueryWorkspace`, `matching_ids!` trong [hash_tree.jl](../src/hash_tree.jl) | Tách lá, truy vấn ID ứng viên và xử lý collision |
 | Hợp tất cả Lk | `MiningResult.itemsets` | Mapping từ tuple item tăng dần sang support count |

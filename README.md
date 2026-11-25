@@ -5,11 +5,11 @@ Nhóm cài đặt Apriori bằng Julia theo bài báo của Rakesh Agrawal và R
 ## Đề bài và phạm vi của nhóm
 
 - [Đề bài gốc của giảng viên](itemset.md) gồm toàn bộ yêu cầu, các hướng ứng dụng được phép chọn và tiêu chí chấm điểm.
-- [Phạm vi đã chốt của nhóm](Phạm%20vi%20đã%20chốt.txt) ghi lựa chọn thuật toán Apriori và cách áp dụng cho bộ dữ liệu Splice-junction.
+- Nhóm chọn Apriori, phân tích giỏ hàng với bộ Retail của SPMF và phân tích dữ liệu sinh học với Splice-junction. [Phạm vi đã chốt của nhóm](Pham_vi_da_chot.txt)
 
 ## Hai ứng dụng trên Google Colab
 
-[Mở notebook tổng hợp Retail và Splice-junction trên Google Colab](https://colab.research.google.com/drive/12c0VClg6WQqTU2FTRtY1YbiWCU13HDA9?usp=sharing)
+[Mở notebook tổng hợp Retail và Splice-junction trên Google Colab](https://colab.research.google.com/github/TVinhQuang/Frequent_Itemset_Mining/blob/main/notebooks/demo.ipynb)
 
 Chọn **Python 3 (CPU)** rồi **Runtime → Run all**. Phần đầu dùng Apriori để tìm các mặt hàng mua chung trong dữ liệu Retail và xếp hạng 10 luật theo lift. Phần sau so sánh các mẫu DNA quanh điểm nối exon–intron của bộ Splice-junction với nhóm đối chứng.
 
@@ -34,7 +34,7 @@ Ví dụ Figure 3 có 4 giao dịch. Với support count tối thiểu bằng 2,
 | Thư mục | Nội dung |
 | --- | --- |
 | [data/](data/README.md) | Bốn dataset benchmark, ví dụ Figure 3, các bộ nhỏ và đáp án kiểm thử. |
-| [apps/](apps/README.md) | Lệnh chạy và kết quả mẫu của Ứng dụng 2 trên bộ dữ liệu Splice-junction. |
+| [apps/](apps/README.md) | Lệnh chạy và cách đọc kết quả của hai ứng dụng Retail (SPMF) và Splice-junction. |
 | [src/](src/) và [bin/](bin/) | Cài đặt Apriori, CLI và các lệnh benchmark. |
 | [test/](test/) | Kiểm thử thuật toán, hai bộ đếm và CLI bằng Julia. |
 | [benchmarks/](benchmarks/) | Bảng kết quả từng dataset, gói log và báo cáo so sánh. |
@@ -47,7 +47,18 @@ julia --project=. test/runtests.jl
 julia --project=. test/benchmark_protocol.jl
 ```
 
-Với Julia 1.13.4, bộ kiểm thử chính đạt 2.839/2.839 và bộ kiểm thử quy trình benchmark đạt 24/24. Notebook chạy từ đầu trên bộ UCI với ngưỡng 20% cho 225 mẫu, khớp với [bảng kết quả mẫu](apps/splice-junction/results/patterns.csv).
+Kết quả lần chạy ngày 25/11/2026 với Julia 1.13.4, gồm kiểm thử hai ứng dụng, luật kết hợp, các bản tối ưu và hai quy trình benchmark:
+
+```text
+Test Summary                                        | Pass  Total
+FrequentItemsetMining                               | 2875   2875
+AssociationRules                                    |  228    228
+Optimized Apriori variants                          |  342    342
+Optimized benchmark APRIORI-V1 transaction sampling |   45     45
+Nested transaction samples and support comparisons  |   24     24
+```
+
+Lệnh chính đạt 3.490/3.490, gồm kiểm tra ứng dụng Retail cục bộ với toàn bộ 45 luật đã xuất từ notebook. Kiểm tra giao thức chạy riêng đạt 24/24. [Output lệnh chính](apps/market-basket/results/runtests.txt) · [Output kiểm tra giao thức](benchmarks/optimized/thuc-nghiem-bo-sung-20261125/protocol-test.txt)
 
 Để chạy cả 8 bộ dữ liệu chức năng qua hai bộ đếm và so với đáp án, dùng PowerShell:
 
@@ -69,3 +80,21 @@ Với Julia 1.13.4, bộ kiểm thử chính đạt 2.839/2.839 và bộ kiểm 
 | [Pumsb](data/benchmarks/pumsb.txt) | 49.046 | 27/27 | [CSV](benchmarks/Pumsb/run-2/results.csv) · [ZIP](benchmarks/Pumsb/run-2/Pumsb-run-2.zip) |
 
 [Bảng so sánh và chẩn đoán điểm nghẽn (Excel)](benchmarks/summary/Thong-ke-Apriori.xlsx) · [Biểu đồ tổng hợp (PNG)](benchmarks/summary/Bieu-do-Apriori.png) · [Quy trình tái lập benchmark](benchmarks/AGENTS.md)
+
+### Kết quả sau tối ưu
+
+Nhóm so sánh Hash-tree, Bitset và Streaming trên cùng các giao dịch. Đợt kiểm chứng ngày 25/11/2026 chạy cả ba phiên bản trên 100% mỗi bộ dữ liệu ở ngưỡng hỗ trợ giữa. Bitset nhanh nhất trên Chess, Mushrooms và Pumsb. Hash-tree nhanh nhất trên Retail ở ngưỡng 5%. [Phân tích và bảng số liệu](docs/chuong-toi-uu-apriori.md#63-kết-quả-kiểm-chứng-ngày-25112026) · [Biểu đồ thời gian và RAM](benchmarks/optimized/kiem-chung-20261125/thoi-gian-va-ram.png) · [CSV và manifest của đợt kiểm chứng](benchmarks/optimized/kiem-chung-20261125/) · [Các đợt đo của nhóm](benchmarks/optimized/) · [Log gốc](benchmarks/optimized/logs.zip)
+
+Để chạy lại Retail ở cùng cấu hình từ thư mục gốc:
+
+```sh
+julia --project=. bin/benchmark-optimized.jl --input data/benchmarks/retail.txt --minsup 0.05 --sample-percentages 100 --seed 42 --warmup 1 --repeats 3 --output output/retail-5pct.csv
+```
+
+### Độ dài giao dịch, quy mô lớn và kiểm chứng external
+
+Ba engine external khớp từng tập mục và support với đầu ra SPMF lưu trong bốn bộ benchmark ở toàn bộ 24 cấu hình minsup (72/72 phép đối chiếu). Sáu CSDL tổng hợp chạy đối chiếu trực tiếp với SPMF đạt 18/18. Bốn quy mô Retail đạt 12/12 khi đối chiếu với support SPMF của bản gốc nhân theo số bản sao. [CSV kiểm chứng trên dữ liệu thật](benchmarks/optimized/thuc-nghiem-bo-sung-20261125/external-correctness.csv) · [CSV thời gian, RAM và nguồn từng điểm](benchmarks/optimized/thuc-nghiem-bo-sung-20261125/minsup-grid.csv)
+
+Khi tính từ khởi động Julia tới khi xuất đủ tệp ở ngưỡng giữa, Bitset external so với Scan đạt 0,98× trên Retail, 1,25× trên Chess, 1,69× trên Mushrooms và 1,32× trên Pumsb. Streaming external chậm hơn Scan ở cả bốn điểm. Cả 36 tệp kết quả của phép đo này khớp đáp án SPMF. [Bảng và số liệu từng lần chạy](benchmarks/optimized/scan-xuat-day-du-20261125/output/) · [Hình so với Scan](benchmarks/optimized/scan-xuat-day-du-20261125/figures/scan-output.pdf)
+
+Với 10.000 giao dịch, 100 item và minsup 28%, Hash-tree nhanh nhất ở độ dài 5–20. Ở độ dài 30–50, cả ba engine đếm 5.050 ứng viên và Bitset nhanh nhất. Trên Retail nhân bản 10 lần (881.620 giao dịch), Streaming dùng 310,3 MiB so với 533,9 MiB của Hash-tree, đổi lại thời gian tăng từ 1,809 lên 4,569 giây. Các CSV kèm theo giữ cả thời gian từng lượt và kết quả so từng itemset–support. [Thiết kế, kết quả và lệnh tái lập](docs/thuc-nghiem-bo-sung.md) · [CSV và metadata](benchmarks/optimized/thuc-nghiem-bo-sung-20261125/) · [Biểu đồ](benchmarks/optimized/thuc-nghiem-bo-sung-20261125/figures/apriori.pdf)

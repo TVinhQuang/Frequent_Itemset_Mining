@@ -2,7 +2,7 @@
 
 Mỗi dataset có một thư mục riêng trong `benchmarks/`. Mỗi đợt hoàn tất ghi bảng chung ở `<Dataset>/run-N/results.csv`. Giữ các đợt cũ để đối chiếu trước và sau tối ưu.
 
-Bảng Excel trong [summary/](summary/) dùng mốc trước tối ưu. Bản CSV ở ngay dưới mỗi thư mục dataset tương ứng với mốc đó. Mở ZIP trong thư mục `run-N/` để xem log của từng lượt. Nếu cần dùng đúng các đường dẫn log ghi trong Excel, giải nén ZIP vào `benchmarks/<Dataset>/<Dataset>-run-N/`.
+Bảng Excel trong [summary/](summary/) dùng mốc trước tối ưu. CSV của mỗi đợt nằm ở `benchmarks/<Dataset>/run-N/results.csv`, cạnh ZIP chứa log của từng lượt. Nếu cần dùng đúng các đường dẫn log ghi trong Excel, giải nén ZIP vào `benchmarks/<Dataset>/<Dataset>-run-N/`.
 
 ## Chuẩn bị
 

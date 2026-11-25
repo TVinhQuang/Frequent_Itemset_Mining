@@ -1,4 +1,23 @@
 @testset "Optimized Apriori variants" begin
+    @testset "External output preserves support across bitmap words and candidate batches" begin
+        mktempdir() do scratch
+            path = joinpath(scratch, "word-boundaries.txt")
+            for n in (63, 64, 65, 127, 128, 129)
+                rows = [i in (1, 63, 64, 65, 127, 128, 129) ? [1, 2, 3] : [1, 3] for i in 1:n]
+                write(path, join((join(row, ' ') for row in rows), "\n") * "\n")
+                expected = mine(rows; min_count=2, counter=:scan).itemsets
+                for (algorithm, input) in ((mine_external, rows), (mine_bitset_external, path),
+                                           (mine_streaming_external, path))
+                    buffer = IOBuffer()
+                    summary = algorithm(input; min_count=2, candidate_batch_size=1, itemset_io=buffer)
+                    lines = split(chomp(String(take!(buffer))), '\n')
+                    reference = [join(key, ' ') * " #SUP: " * string(value) for (key, value) in expected]
+                    @test sort(lines) == sort(reference)
+                    @test summary.itemsets == length(lines)
+                end
+            end
+        end
+    end
     root = normpath(joinpath(@__DIR__, ".."))
     datasets = joinpath(root, "data", "test-kit", "datasets")
     for filename in sort(readdir(datasets))
@@ -93,6 +112,29 @@
             end
         end
         bloom_level = FrequentItemsetMining.DiskLevel(bloom_path, 2, 2_000)
+        tiny = FrequentItemsetMining.build_disk_membership_bloom(bloom_level; max_bytes=8)
+        absent = (10_001, 20_001)
+        @test FrequentItemsetMining.bloom_might_contain(tiny, absent)
+        open(bloom_path) do io
+            @test !FrequentItemsetMining.disk_level_contains(io, bloom_level, absent)
+        end
+        @test isnothing(FrequentItemsetMining.build_packed_disk_membership(bloom_level; max_bytes=0))
+        for (key, keytype) in (((1, 1 << 31), UInt64),
+                               ((1, 2, 3, 1 << 31), UInt128),
+                               ((1, 2, 1 << 42), nothing))
+            boundary_path = joinpath(bloom_scratch, "packed-boundary-$(length(key)).bin")
+            open(boundary_path, "w") do io
+                foreach(item -> write(io, Int64(item)), key)
+            end
+            level = FrequentItemsetMining.DiskLevel(boundary_path, length(key), 1)
+            index = FrequentItemsetMining.build_packed_disk_membership(level)
+            if isnothing(keytype)
+                @test isnothing(index)
+            else
+                @test eltype(index.keys) == keytype
+                @test FrequentItemsetMining.disk_membership_contains(index, key)
+            end
+        end
         bloom = FrequentItemsetMining.build_disk_membership_bloom(bloom_level)
         @test all(FrequentItemsetMining.bloom_might_contain(bloom, (item, item + 10_000))
                   for item in 1:2_000)
@@ -213,8 +255,8 @@
 
     rng = MersenneTwister(20261121)
     mktempdir() do scratch
-        path = joinpath(scratch, "random.txt")
         for trial in 1:20
+            path = joinpath(scratch, "random-$trial.txt")
             transactions = Vector{Int}[]
             for _ in 1:10
                 row = Int[item for item in 0:6 if rand(rng) < 0.55]

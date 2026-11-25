@@ -1,0 +1,19 @@
+Working directory: D:/FrequentItemsetMining
+Date: 2026-11-25 (Asia/Saigon)
+TEMP and TMP: D:/FrequentItemsetMining/output/study-apriori-20261125
+JULIA_DEPOT_PATH: D:/FrequentItemsetMining/output/study-apriori-20261125/depot;D:/Tools/JuliaDepot-apriori
+
+PowerShell command used for the initial study:
+& 'C:/Users/Admin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -B bin/study-apriori.py --julia 'D:/Tools/Julia-1.13.4-apriori/julia-1.13.4/bin/julia.exe' --jar D:/Tools/spmf-apriori/spmf.jar --scratch output/study-apriori-20261125 --output benchmarks/optimized/thuc-nghiem-bo-sung-20261125 --parts width size minsup exact
+
+Use a fresh output path for a rerun. source.zip preserves the files whose SHA-256 values are recorded in metadata.json.
+
+Additional correctness exports at the lowest previously timed thresholds:
+& 'C:/Users/Admin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -B bin/study-apriori.py --julia 'D:/Tools/Julia-1.13.4-apriori/julia-1.13.4/bin/julia.exe' --jar D:/Tools/spmf-apriori/spmf.jar --scratch output/study-apriori-20261125 --output benchmarks/optimized/doi-chieu-nguong-thap-20261125 --parts lowest
+
+Regenerate the combined CSVs and figures from the stored measurements:
+& 'C:/Users/Admin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -B bin/plot-apriori-study.py benchmarks/optimized/thuc-nghiem-bo-sung-20261125 --lowest-run benchmarks/optimized/doi-chieu-nguong-thap-20261125
+
+Compare cold basic Scan, external Bitset and external Streaming, including full output:
+& 'C:/Users/Admin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -B bin/study-apriori.py --julia 'D:/Tools/Julia-1.13.4-apriori/julia-1.13.4/bin/julia.exe' --scratch output/study-apriori-20261125 --output benchmarks/optimized/scan-xuat-day-du-20261125 --parts output
+& 'C:/Users/Admin/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -B bin/plot-apriori-study.py benchmarks/optimized/scan-xuat-day-du-20261125 --scan-output

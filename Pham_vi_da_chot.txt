@@ -1,0 +1,21 @@
+PHẠM VI ĐÃ CHỐT CỦA NHÓM — KHAI THÁC TẬP PHỔ BIẾN
+
+1. Thuật toán
+Nhóm cài đặt Apriori bằng Julia theo bài báo của Rakesh Agrawal và Ramakrishnan Srikant.
+https://www.philippe-fournier-viger.com/spmf/apriori_longer.pdf
+
+2. Ứng dụng 1 — Phân tích giỏ hàng (Market Basket Analysis)
+Nhóm chọn bộ Retail của SPMF theo notebook Ứng dụng 1. Mỗi dòng trong retail.txt là một giỏ gồm các mã mặt hàng ẩn danh. Bộ dữ liệu có 88.162 giỏ và 16.470 mã mặt hàng.
+Từ các tập mục phổ biến, nhóm sinh luật A → B. Luật được giữ khi support của A ∪ B đạt minsup và confidence của A → B đạt minconf. Nhóm trình bày 10 luật có lift cao nhất và giải thích ý nghĩa kinh doanh.
+Ở bản demo, nhóm dùng mặc định minsup = 2% (ít nhất 1.764 giỏ) và minconf = 50%. Apriori tìm được 55 tập mục phổ biến và sinh được 45 luật đạt ngưỡng.
+Notebook: notebooks/ung-dung-1-retail.ipynb và phần Retail trong notebooks/demo.ipynb.
+Nguồn dữ liệu: https://www.philippe-fournier-viger.com/spmf/datasets/retail.txt
+
+3. Ứng dụng 2 — Phân tích dữ liệu sinh học
+Nhóm chọn bộ UCI Molecular Biology (Splice-junction Gene Sequences). Mỗi đoạn DNA là một giao dịch; mỗi item kết hợp vị trí so với tâm đoạn và nucleotide quan sát tại đó.
+Nhóm xét 4 vị trí mỗi bên, chạy Apriori riêng trên EI (exon → intron), IE (intron → exon) và N (đối chứng). Nhóm so sánh support của cùng một mẫu giữa ba nhóm và giải thích sự khác biệt gần ranh giới. Ngưỡng mặc định của bản demo là 20% trong từng nhóm.
+Nguồn dữ liệu: https://doi.org/10.24432/C5M888
+
+4. Liên kết của nhóm
+GitHub: https://github.com/TVinhQuang/Frequent_Itemset_Mining.git
+Google Colab: https://colab.research.google.com/github/TVinhQuang/Frequent_Itemset_Mining/blob/main/notebooks/demo.ipynb

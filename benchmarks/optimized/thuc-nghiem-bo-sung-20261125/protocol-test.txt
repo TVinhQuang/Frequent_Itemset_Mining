@@ -1,0 +1,2 @@
+Test Summary:                                      | Pass  Total  Time
+Nested transaction samples and support comparisons |   24     24  1.1s

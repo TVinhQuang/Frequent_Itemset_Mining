@@ -2,7 +2,7 @@
 # Sinh luật kết hợp từ file frequent itemsets (đầu ra của bin/apriori.jl).
 #
 #   julia --project=. bin/rules.jl --itemsets output/retail.txt \
-#         --data data/dataset_train/retail.txt --minconf 0.5 --top 10 \
+#         --data data/benchmarks/retail.txt --minconf 0.5 --top 10 \
 #         --out output/retail-rules.csv
 
 include(joinpath(@__DIR__, "..", "src", "AssociationRules.jl"))

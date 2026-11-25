@@ -12,11 +12,10 @@ using .FrequentItemsetMining
     include("timing.jl")
     include("reports.jl")
     include("report_cli.jl")
+    include("market_basket.jl")
     include("splice_junction.jl")
 end
 
 include("rules_tests.jl")
-
 include("apriori_optimized.jl")
-
 include("benchmark_optimized_sampling.jl")
