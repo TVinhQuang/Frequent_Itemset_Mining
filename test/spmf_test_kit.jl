@@ -26,7 +26,7 @@ include(joinpath(@__DIR__, "..", "bin", "benchmark.jl"))  # patterns, filehash a
             n = length(rows)
 
             # Each SPMF capture includes its header, even when zero itemsets qualify.
-            capture = joinpath(scratch, "capture.txt")
+            capture = joinpath(scratch, "$(name)-capture.txt")
             write(capture, case["output"])
             reference = patterns(capture, 1, n)
             @test patterns(joinpath(kit, "expected", name * ".txt"), 1, n) == reference
@@ -41,7 +41,7 @@ include(joinpath(@__DIR__, "..", "bin", "benchmark.jl"))  # patterns, filehash a
 
             @testset "$counter" for counter in (:scan, :hash_tree)
                 result = mine(rows; min_support=minsup, counter=counter)
-                output = joinpath(scratch, "julia.txt")
+                output = joinpath(scratch, "$(name)-$(counter).txt")
                 write_spmf(result.itemsets, output)
                 @test patterns(output, 1, n) == reference
             end

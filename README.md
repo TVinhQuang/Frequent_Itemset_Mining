@@ -27,7 +27,7 @@ Chọn **Python 3 (CPU)** rồi **Runtime → Run all**. Phần đầu dùng Apr
 | [ung-dung-1-retail.ipynb](notebooks/ung-dung-1-retail.ipynb) | Bản riêng của Ứng dụng 1, phân tích giỏ hàng Retail. |
 | [ung-dung-2-splice-junction.ipynb](notebooks/ung-dung-2-splice-junction.ipynb) | Bản riêng của Ứng dụng 2, phân tích điểm nối exon–intron. |
 
-Cả ba notebook đóng gói mã Julia từ cùng [phiên bản mã nguồn](https://github.com/TVinhQuang/Frequent_Itemset_Mining/tree/e48110f6978f226a80329dbcfeef07e1c519c530). Notebook tổng hợp và bản Retail kèm dữ liệu kiểm thử để chạy bộ kiểm thử của dự án ngay trong phiên Colab.
+Mã Apriori trong cả ba notebook lấy từ [cùng một phiên bản](https://github.com/TVinhQuang/Frequent_Itemset_Mining/tree/e48110f6978f226a80329dbcfeef07e1c519c530). Notebook tổng hợp và bản Retail đóng gói bộ kiểm thử của repo cùng dữ liệu để chạy ngay trong phiên Colab.
 
 ## Chạy ví dụ trong bài báo
 
@@ -53,11 +53,11 @@ Ví dụ Figure 3 có 4 giao dịch. Với support count tối thiểu bằng 2,
 ## Kiểm thử
 
 ```sh
-julia --project=. test/runtests.jl
+julia --project test/runtests.jl
 julia --project=. test/benchmark_protocol.jl
 ```
 
-Kết quả lần chạy ngày 25/11/2026 với Julia 1.13.4, gồm kiểm thử hai ứng dụng, luật kết hợp, các bản tối ưu và hai quy trình benchmark:
+Kết quả lần chạy ngày 27/11/2026 trên Windows với Julia 1.13.4, gồm kiểm thử hai ứng dụng, luật kết hợp, các bản tối ưu và hai quy trình benchmark:
 
 ```text
 Test Summary                                        | Pass  Total
@@ -69,7 +69,7 @@ Optimized benchmark APRIORI-V1 transaction sampling |   45     45
 Nested transaction samples and support comparisons  |   24     24
 ```
 
-Lệnh chính đạt 3.524/3.524, gồm kiểm tra ứng dụng Retail cục bộ với toàn bộ 45 luật đã xuất từ notebook. Kiểm tra giao thức chạy riêng đạt 24/24. [Output lệnh chính](apps/market-basket/results/runtests.txt) · [Output kiểm tra giao thức](benchmarks/optimized/thuc-nghiem-bo-sung-20261125/protocol-test.txt)
+Lệnh chính đạt 3.524/3.524, gồm kiểm tra ứng dụng Retail cục bộ với toàn bộ 45 luật đã xuất từ notebook. Kiểm tra giao thức chạy riêng đạt 24/24. [Output lệnh chính](apps/market-basket/results/runtests.txt) · [Log giao thức của đợt thực nghiệm](benchmarks/optimized/thuc-nghiem-bo-sung-20261125/protocol-test.txt)
 
 Trên bộ test nhỏ của Chương 1, Scan và Hash-tree mỗi bản khớp **8/8 CSDL (100%)** với SPMF 2.68. Mỗi bản khớp đủ 53/53 cặp tập mục–support và cùng trả về 0 tập ở ca rỗng. Unit test mặc định dùng đầu ra SPMF đã lưu. Đặt biến môi trường `SPMF_JAR` để kiểm tra thêm bằng cách chạy lại JAR. [Bảng kết quả, dữ liệu tham chiếu và lệnh tái lập](data/test-kit/README.md)
 

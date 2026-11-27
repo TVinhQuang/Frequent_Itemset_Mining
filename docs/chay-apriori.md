@@ -226,4 +226,4 @@ Test Summary:         | Pass  Total
 FrequentItemsetMining | 2828   2828
 ```
 
-Cả bốn dataset đã được đối chiếu với SPMF Apriori. Xem [bảng tổng hợp và các gói kết quả](../README.md#kết-quả-benchmark). Sinh luật kết hợp, hai ứng dụng giỏ hàng/sinh học và quản lý bộ đệm ngoài RAM của §2.1.3 là các phần tiếp theo của đồ án.
+Cả bốn dataset đã được đối chiếu với SPMF Apriori. Xem [bảng tổng hợp và các gói kết quả](../README.md#kết-quả-benchmark). Hướng dẫn chạy [hai ứng dụng Retail và Splice-junction](../apps/README.md) có kèm kết quả và cách đọc. [Thực nghiệm bổ sung](thuc-nghiem-bo-sung.md) mô tả cách chạy và đo các biến thể dùng bộ nhớ ngoài.
