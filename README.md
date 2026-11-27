@@ -2,6 +2,14 @@
 
 Nhóm cài đặt Apriori bằng Julia theo bài báo của Rakesh Agrawal và Ramakrishnan Srikant. Hai bộ đếm `scan` và `hash-tree` dùng chung bước sinh ứng viên và trả về từng tập phổ biến cùng support count. [Bài báo gốc (PDF)](docs/apriori_longer.pdf) · [Thuật toán và mã nguồn tương ứng](docs/apriori-paper.md)
 
+## Thành viên nhóm
+
+| Họ và tên | MSSV |
+| --- | --- |
+| Phạm Nguyễn Trường Huy | 24127401 |
+| Trần Vinh Quang | 24127523 |
+| Phạm Đặng Thiên Quốc | 24127524 |
+
 ## Đề bài và phạm vi của nhóm
 
 - [Đề bài gốc của giảng viên](itemset.md) gồm toàn bộ yêu cầu, các hướng ứng dụng được phép chọn và tiêu chí chấm điểm.
@@ -18,6 +26,8 @@ Chọn **Python 3 (CPU)** rồi **Runtime → Run all**. Phần đầu dùng Apr
 | [demo.ipynb](notebooks/demo.ipynb) | Bản tổng hợp để chạy cả hai ứng dụng và xem kết quả ngay trong notebook. |
 | [ung-dung-1-retail.ipynb](notebooks/ung-dung-1-retail.ipynb) | Bản riêng của Ứng dụng 1, phân tích giỏ hàng Retail. |
 | [ung-dung-2-splice-junction.ipynb](notebooks/ung-dung-2-splice-junction.ipynb) | Bản riêng của Ứng dụng 2, phân tích điểm nối exon–intron. |
+
+Cả ba notebook đóng gói mã Julia từ cùng [phiên bản mã nguồn](https://github.com/TVinhQuang/Frequent_Itemset_Mining/tree/e48110f6978f226a80329dbcfeef07e1c519c530). Notebook tổng hợp và bản Retail kèm dữ liệu kiểm thử để chạy bộ kiểm thử của dự án ngay trong phiên Colab.
 
 ## Chạy ví dụ trong bài báo
 
